@@ -1,0 +1,1084 @@
+fileFormatVersion: 2
+guid: 51e2e907e28621940bc4f0b03cade1ad
+timeCreated: 1485085071
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: promptsheet_0
+    21300002: promptsheet_1
+    21300004: promptsheet_2
+    21300006: promptsheet_3
+    21300008: promptsheet_4
+    21300010: promptsheet_5
+    21300012: promptsheet_6
+    21300014: promptsheet_7
+    21300016: promptsheet_8
+    21300018: promptsheet_9
+    21300020: promptsheet_10
+    21300022: promptsheet_11
+    21300024: promptsheet_12
+    21300026: promptsheet_13
+    21300028: promptsheet_14
+    21300030: promptsheet_15
+    21300032: promptsheet_16
+    21300034: promptsheet_17
+    21300036: promptsheet_18
+    21300038: promptsheet_19
+    21300040: promptsheet_20
+    21300042: promptsheet_21
+    21300044: promptsheet_22
+    21300046: promptsheet_23
+    21300048: promptsheet_24
+    21300050: promptsheet_25
+    21300052: promptsheet_26
+    21300054: promptsheet_27
+    21300056: promptsheet_28
+    21300058: promptsheet_29
+    21300060: promptsheet_30
+    21300062: promptsheet_31
+    21300064: promptsheet_32
+    21300066: promptsheet_33
+    21300068: promptsheet_34
+    21300070: promptsheet_35
+    21300072: promptsheet_36
+    21300074: promptsheet_37
+    21300076: promptsheet_38
+    21300078: promptsheet_39
+    21300080: promptsheet_40
+    21300082: promptsheet_41
+    21300084: promptsheet_42
+    21300086: promptsheet_43
+    21300088: promptsheet_44
+    21300090: promptsheet_45
+    21300092: promptsheet_46
+    21300094: promptsheet_47
+    21300096: promptsheet_48
+    21300098: promptsheet_49
+    21300100: promptsheet_50
+    21300102: promptsheet_51
+    21300104: promptsheet_52
+    21300106: promptsheet_53
+    21300108: promptsheet_54
+    21300110: promptsheet_55
+    21300112: promptsheet_56
+    21300114: promptsheet_57
+    21300116: promptsheet_58
+    21300118: promptsheet_59
+    21300120: promptsheet_60
+    21300122: promptsheet_61
+    21300124: promptsheet_62
+    21300126: promptsheet_63
+    21300128: promptsheet_64
+    21300130: promptsheet_65
+    21300132: promptsheet_66
+    21300134: promptsheet_67
+    21300136: promptsheet_68
+    21300138: promptsheet_69
+    21300140: promptsheet_70
+    21300142: promptsheet_71
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  - buildTarget: Standalone
+    maxTextureSize: 2048
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: promptsheet_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 177
+        width: 37
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_1
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 177
+        width: 37
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_2
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 169
+        width: 37
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_3
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 176
+        width: 43
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_4
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 176
+        width: 44
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_5
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 170
+        width: 37
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_6
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 176
+        width: 50
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_7
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 173
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_8
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 170
+        width: 50
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_9
+      rect:
+        serializedVersion: 2
+        x: 483
+        y: 171
+        width: 39
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_10
+      rect:
+        serializedVersion: 2
+        x: 533
+        y: 170
+        width: 50
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_11
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 173
+        width: 50
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_12
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 170
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_13
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 170
+        width: 45
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_14
+      rect:
+        serializedVersion: 2
+        x: 750
+        y: 170
+        width: 47
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_15
+      rect:
+        serializedVersion: 2
+        x: 805
+        y: 171
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_16
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 122
+        width: 37
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_17
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 122
+        width: 37
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_18
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 114
+        width: 37
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_19
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 121
+        width: 43
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_20
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 121
+        width: 44
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_21
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 114
+        width: 37
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_22
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 120
+        width: 50
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_23
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 117
+        width: 45
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_24
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 118
+        width: 45
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_25
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 117
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_26
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 117
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_27
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 117
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_28
+      rect:
+        serializedVersion: 2
+        x: 645
+        y: 117
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_29
+      rect:
+        serializedVersion: 2
+        x: 696
+        y: 117
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_30
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 117
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_31
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 121
+        width: 44
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_32
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 126
+        width: 43
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_33
+      rect:
+        serializedVersion: 2
+        x: 922
+        y: 126
+        width: 42
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_34
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 62
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_35
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 62
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_36
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 62
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_37
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 62
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_38
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 62
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_39
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 62
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_40
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 62
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_41
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 60
+        width: 48
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_42
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 61
+        width: 48
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_43
+      rect:
+        serializedVersion: 2
+        x: 486
+        y: 63
+        width: 40
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_44
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 63
+        width: 40
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_45
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 63
+        width: 40
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_46
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 63
+        width: 40
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_47
+      rect:
+        serializedVersion: 2
+        x: 698
+        y: 70
+        width: 42
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_48
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 72
+        width: 36
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_49
+      rect:
+        serializedVersion: 2
+        x: 808
+        y: 69
+        width: 45
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_50
+      rect:
+        serializedVersion: 2
+        x: 857
+        y: 69
+        width: 39
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_51
+      rect:
+        serializedVersion: 2
+        x: 908
+        y: 67
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_52
+      rect:
+        serializedVersion: 2
+        x: 955
+        y: 67
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_53
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 8
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_54
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 8
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_55
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 8
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_56
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 8
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_57
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 8
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_58
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 8
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_59
+      rect:
+        serializedVersion: 2
+        x: 324
+        y: 8
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_60
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 6
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_61
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 6
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_62
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 9
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_63
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 8
+        width: 36
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_64
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 9
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_65
+      rect:
+        serializedVersion: 2
+        x: 650
+        y: 9
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_66
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 16
+        width: 32
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_67
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 16
+        width: 32
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_68
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 13
+        width: 34
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_69
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 13
+        width: 34
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_70
+      rect:
+        serializedVersion: 2
+        x: 907
+        y: 6
+        width: 35
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: promptsheet_71
+      rect:
+        serializedVersion: 2
+        x: 955
+        y: 6
+        width: 34
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

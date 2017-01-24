@@ -1,0 +1,241 @@
+fileFormatVersion: 2
+guid: 158a158d4d42b47429742eadd399da76
+timeCreated: 1485021206
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Body
+    100002: Head
+    100004: Head 1
+    100006: L_control
+    100008: L_IKHandle
+    100010: Left_Knee
+    100012: Left_Leg
+    100014: LeftArm
+    100016: LeftArm 1
+    100018: LeftElbow
+    100020: LeftFoot
+    100022: LeftHand
+    100024: LeftLeg
+    100026: pCube1
+    100028: PlayerGeo
+    100030: R_Control
+    100032: R_IKHandle
+    100034: Right_Knee
+    100036: Right_Leg
+    100038: RightArm
+    100040: RightArm 1
+    100042: RightElbow
+    100044: RightFoot
+    100046: RightHand
+    100048: RightLeg
+    100050: Root
+    100052: //RootNode
+    400000: Body
+    400002: Head
+    400004: Head 1
+    400006: L_control
+    400008: L_IKHandle
+    400010: Left_Knee
+    400012: Left_Leg
+    400014: LeftArm
+    400016: LeftArm 1
+    400018: LeftElbow
+    400020: LeftFoot
+    400022: LeftHand
+    400024: LeftLeg
+    400026: pCube1
+    400028: PlayerGeo
+    400030: R_Control
+    400032: R_IKHandle
+    400034: Right_Knee
+    400036: Right_Leg
+    400038: RightArm
+    400040: RightArm 1
+    400042: RightElbow
+    400044: RightFoot
+    400046: RightHand
+    400048: RightLeg
+    400050: Root
+    400052: //RootNode
+    2300000: pCube1
+    2300002: Body
+    2300004: Head
+    2300006: LeftArm
+    2300008: LeftLeg
+    2300010: RightArm
+    2300012: RightLeg
+    3300000: pCube1
+    3300002: Body
+    3300004: Head
+    3300006: LeftArm
+    3300008: LeftLeg
+    3300010: RightArm
+    3300012: RightLeg
+    4300000: Head
+    4300002: Body
+    4300004: LeftArm
+    4300006: LeftLeg
+    4300008: RightArm
+    4300010: RightLeg
+    4300012: pCube1
+    7400000: Take 001
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: Body
+    13700002: Head
+    13700004: LeftArm
+    13700006: LeftLeg
+    13700008: RightArm
+    13700010: RightLeg
+  materials:
+    importMaterials: 1
+    materialName: 1
+    materialSearch: 2
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 62
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: L_control
+        weight: 1
+      - path: L_control/L_IKHandle
+        weight: 1
+      - path: PlayerGeo
+        weight: 1
+      - path: PlayerGeo/Body
+        weight: 1
+      - path: PlayerGeo/Head
+        weight: 1
+      - path: PlayerGeo/LeftArm
+        weight: 1
+      - path: PlayerGeo/LeftLeg
+        weight: 1
+      - path: PlayerGeo/RightArm
+        weight: 1
+      - path: PlayerGeo/RightLeg
+        weight: 1
+      - path: R_Control
+        weight: 1
+      - path: R_Control/R_IKHandle
+        weight: 1
+      - path: Root
+        weight: 1
+      - path: Root/Head 1
+        weight: 1
+      - path: Root/Left_Leg
+        weight: 1
+      - path: Root/Left_Leg/Left_Knee
+        weight: 1
+      - path: Root/Left_Leg/Left_Knee/LeftFoot
+        weight: 1
+      - path: Root/LeftArm 1
+        weight: 1
+      - path: Root/LeftArm 1/LeftElbow
+        weight: 1
+      - path: Root/LeftArm 1/LeftElbow/LeftHand
+        weight: 1
+      - path: Root/Right_Leg
+        weight: 1
+      - path: Root/Right_Leg/Right_Knee
+        weight: 1
+      - path: Root/Right_Leg/Right_Knee/RightFoot
+        weight: 1
+      - path: Root/RightArm 1
+        weight: 1
+      - path: Root/RightArm 1/RightElbow
+        weight: 1
+      - path: Root/RightArm 1/RightElbow/RightHand
+        weight: 1
+      - path: Root/RightArm 1/RightElbow/RightHand/pCube1
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
