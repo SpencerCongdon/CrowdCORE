@@ -8,26 +8,26 @@ public class DrumsStrobe : MonoBehaviour
     public float randomMin = 0.5f;
     public float randomMax = 5.0f;
     private float randomTime = 0.0f;
-    public Light light;
+    public Light drumLight;
 
     void Start ()
     {
-        light = gameObject.GetComponent<Light>();
+        drumLight = gameObject.GetComponent<Light>();
 
-        if (light != null)
-            light.enabled = false;
+        if (drumLight != null)
+            drumLight.enabled = false;
 
         randomTime = Random.Range(randomMin, randomMax);
     }
     void Update ()
     {
-        if (light != null)
+        if (drumLight != null)
         {
             timer += Time.deltaTime;
 
             if (timer > randomTime)
             {
-                light.enabled = !light.enabled;
+                drumLight.enabled = !drumLight.enabled;
                 timer = 0.0f;
                 randomTime = Random.Range(randomMin, randomMax);
             }

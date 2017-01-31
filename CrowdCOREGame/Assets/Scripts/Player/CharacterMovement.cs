@@ -19,7 +19,6 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float topPower;
     [SerializeField] private float torquePower;
 
-    private Renderer render = null;
     private PlayerStats playerStats = null;
 
     private float cooldownTimerTop = 0;
@@ -27,7 +26,6 @@ public class CharacterMovement : MonoBehaviour
 
     void Start ()
     {
-        render = GetComponent<Renderer>();
         playerStats = GetComponent<PlayerStats>();
     }
 	

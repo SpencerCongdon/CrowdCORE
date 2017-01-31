@@ -24,13 +24,7 @@ public class CrowdMember : MonoBehaviour
     [SerializeField]
     private float mMinJumpForce = 100f;
 
-    [SerializeField]
-    private float mMinJumpTime = 0.2f;
-
     private Rigidbody mRb;
-    private Collider mThisCollider;
-
-    private float mDistToGround = 0.0f;
 
     [SerializeField]
     private float mInfluenceTime = 3.0f;
@@ -83,8 +77,6 @@ public class CrowdMember : MonoBehaviour
     void Awake()
     {
         mCurrentInfluence = CrowdEnums.InfluenceType.None;
-        mThisCollider = GetComponent<Collider>();
-        mDistToGround = transform.position.y;
         mRb = GetComponent<Rigidbody>();
     }
 
@@ -171,7 +163,6 @@ public class CrowdMember : MonoBehaviour
     public bool IsGrounded()
     {
         bool isGrounded = false;
-        //if (transform.position.y <= mDistToGround + 0.1f)
         if (Physics.Raycast(mFoot.position, -1.0f * mFoot.up, 0.1f))
         {
             isGrounded = true;

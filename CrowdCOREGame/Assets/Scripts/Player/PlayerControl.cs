@@ -15,9 +15,7 @@ public class PlayerControl : MonoBehaviour
 	public Transform headBone;
 	public float minRot = -45.0f;
 	public float maxRot = 45.0f;
-	private bool isForward = false;
 	public float rotSpeed = 2.0f;
-	private float newRot = 0.0f;
 	private float t = 0.0f;
 	private Quaternion start;
 	private Quaternion end;
@@ -70,18 +68,21 @@ public class PlayerControl : MonoBehaviour
 		t = Mathf.PingPong(Time.time * rotSpeed,1.0f);
 		headBone.localRotation = Quaternion.Slerp (start, end, t);
 
-		// Test Controls
-		if(Input.GetButtonDown("AttackTop"+playerstats.PlayerID))
-		{
-            LimbStrike(LeftArm);
-            LimbStrike(RightArm);
-		}
+        if(currentState == PlayerState.MOVING)
+        {
+            // Test Controls
+            if (Input.GetButtonDown("AttackTop" + playerstats.PlayerID))
+            {
+                LimbStrike(LeftArm);
+                LimbStrike(RightArm);
+            }
 
-		if(Input.GetButtonDown("AttackBot" + playerstats.PlayerID))
-		{
-            LimbStrike(LeftLeg);
-            LimbStrike(RightLeg);
-		}
+            if (Input.GetButtonDown("AttackBot" + playerstats.PlayerID))
+            {
+                LimbStrike(LeftLeg);
+                LimbStrike(RightLeg);
+            }
+        }
 	}
 
 	public void LimbStrike (Transform limb)

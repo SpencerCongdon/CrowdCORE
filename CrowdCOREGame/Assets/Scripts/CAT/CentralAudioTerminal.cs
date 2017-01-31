@@ -11,7 +11,6 @@ public class CentralAudioTerminal : Singleton<CentralAudioTerminal>
 
     private AudioClip currentClip;
     private AudioClip nextClip;
-    private AudioClip previousClip;
 
     public AudioSource[] audioChannel;
     private AudioSource currentChannel;
@@ -23,7 +22,6 @@ public class CentralAudioTerminal : Singleton<CentralAudioTerminal>
     private float timer;
     private float currentClipLength;
     private float nextClipLength;
-    private float previousClipLength;
 
     private int iterator;
     public bool gameOver = false;
@@ -68,8 +66,6 @@ public class CentralAudioTerminal : Singleton<CentralAudioTerminal>
 
                 //JuggleChannels prev/current/next
                 previousChannel = currentChannel;
-                previousClip = currentClip;
-                previousClipLength = previousClip.length;
                 
                 currentChannel = nextChannel;
                 currentClip = nextClip;

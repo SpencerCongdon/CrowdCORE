@@ -30,7 +30,6 @@ public class GameManager : Singleton<GameManager>
     private GameState currentState;
     private int alivePlayersCounter;
     private int winner;
-    private string currentScene;
 
     public int NumPlayers = 0;
 
@@ -114,7 +113,6 @@ public class GameManager : Singleton<GameManager>
         currentState = GameState.COUNTDOWN;
         alivePlayersCounter = GameManager.Instance.NumPlayers;
         SceneManager.LoadScene("MainScene");
-        currentScene = SceneManager.GetActiveScene().name;
 
         StartCoroutine(DoCountdown());
     }
@@ -123,7 +121,6 @@ public class GameManager : Singleton<GameManager>
     {
         currentState = GameState.COUNTDOWN;
         alivePlayersCounter = GameManager.Instance.NumPlayers;
-        currentScene = SceneManager.GetActiveScene().name;
 
         StartCoroutine(DoCountdown());
     }

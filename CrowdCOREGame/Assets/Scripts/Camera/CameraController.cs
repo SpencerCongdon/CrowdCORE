@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour
     public bool HoldLook;
     
     // Timers
-    float verTime, horTime, lookTime = 0f;
+    float verTime, horTime = 0f;
     bool verKeepLerping, horKeepLerping;
 
     // Camera Cuts
