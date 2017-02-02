@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharacterBody : MonoBehaviour
 {
     [SerializeField] private PlayerStats playerstats;
-    [SerializeField] private PlayerControl playerControl;
+    [SerializeField] private SurferControl playerControl;
     [SerializeField] private CharacterMovement characterMovement;
 
     void OnCollisionEnter(Collision c)

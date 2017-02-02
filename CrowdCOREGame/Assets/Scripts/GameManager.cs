@@ -24,6 +24,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] Text messageText;
     [SerializeField] Text messageTextSmall;
     [SerializeField] Animator messageAnimator;
+    [SerializeField] GameObject inputManager;
 
     public List<Color> PlayerColors;
 
@@ -35,6 +36,9 @@ public class GameManager : Singleton<GameManager>
 
     public override void Awake()
     {
+        // Start the input manager
+        Instantiate(inputManager);
+
         currentState = GameState.TITLE_SCREEN;
         SceneManager.LoadScene("TitleScene");
 

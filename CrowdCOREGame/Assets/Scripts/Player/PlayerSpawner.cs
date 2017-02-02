@@ -26,14 +26,14 @@ public class PlayerSpawner : Singleton<PlayerSpawner>
             {
                 GameObject newPlayer = GameObject.Instantiate(playerPrefab, spawnPositions[i].position, playerPrefab.transform.rotation);
                 PlayerStats playerStats = newPlayer.GetComponent<PlayerStats>();
-                PlayerControl control = newPlayer.GetComponent<PlayerControl>();
+                SurferControl control = newPlayer.GetComponent<SurferControl>();
 
                 PlayerLight pLight = playerLights[i];
                 pLight.GetComponent<Light>().color = GameManager.Instance.PlayerColors[i];
                 pLight.enabled = true;
                 pLight.GetComponent<Light>().enabled = true;
                 pLight.gameObject.SetActive(true);
-                pLight.followPlayer = control.MainBody.gameObject;
+                pLight.followPlayer = control.gameObject;
                 playerStats.CurrentLight = pLight;
 
                 playerStats.PlayerID = i + 1;
