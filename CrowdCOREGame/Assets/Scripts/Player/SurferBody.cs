@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterBody : MonoBehaviour
+public class SurferBody : MonoBehaviour
 {
     [SerializeField] private PlayerStats playerstats;
     [SerializeField] private SurferControl playerControl;
-    [SerializeField] private CharacterMovement characterMovement;
 
     void OnCollisionEnter(Collision c)
     {
@@ -15,7 +14,6 @@ public class CharacterBody : MonoBehaviour
             if (playerstats.CurrentState != PlayerStats.PlayerState.DEAD)
             {
                 playerControl.enabled = false;
-                characterMovement.enabled = false;
                 playerstats.CurrentState = PlayerStats.PlayerState.DEAD;
                 playerstats.CurrentLight.enabled = false;
                 Light light = playerstats.CurrentLight.GetComponent<Light>();
