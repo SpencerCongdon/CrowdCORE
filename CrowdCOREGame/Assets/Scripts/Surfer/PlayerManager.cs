@@ -7,8 +7,8 @@ public class PlayerManager : MonoBehaviour {
 
     private bool isSearching = false;
 
-
-    private List<SurferPlayer> players;
+    // TODO: protect this?
+    public List<SurferPlayer> Players;
 
 	// Use this for initialization
 	void Start () {
@@ -16,8 +16,8 @@ public class PlayerManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void Update ()
+    {
         if(isSearching)
         {
             // This is the ReWired.Player count
@@ -26,12 +26,12 @@ public class PlayerManager : MonoBehaviour {
             {
                 if(ReInput.players.GetPlayer(i).GetButtonDown("JoinGame"))
                 {
-
+                    SurferPlayer newPlayer = new SurferPlayer(i);
+                    Players.Add(newPlayer);
                 }
             }
         }
-
-	}
+    }
 
     public void StartSearchingForUsers(bool clearFirst = false)
     {
@@ -50,6 +50,6 @@ public class PlayerManager : MonoBehaviour {
 
     private void ClearPlayers()
     {
-        players.Clear();
+        Players.Clear();
     }
 }

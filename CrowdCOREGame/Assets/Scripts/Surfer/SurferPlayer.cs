@@ -12,4 +12,9 @@ public class SurferPlayer : MonoBehaviour
 
     public int PlayerID { get { return playerID; } set { playerID = value; } }
     public string PlayerName { get { return playerName; } }
+
+    public SurferPlayer(int id)
+    {
+        playerID = id;
+    }
 }
