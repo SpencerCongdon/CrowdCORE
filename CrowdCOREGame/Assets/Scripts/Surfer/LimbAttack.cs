@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LimbAttack : MonoBehaviour
 {
-    [SerializeField] PlayerStats playerStats;
+    [SerializeField] SurferPlayer playerStats;
     public float power;
     public float minLimbVelocity;
 
@@ -20,7 +20,7 @@ public class LimbAttack : MonoBehaviour
                 parent = parent.parent;
             }
 
-            PlayerStats otherPlayerStats = parent.GetComponent<PlayerStats>();
+            SurferPlayer otherPlayerStats = parent.GetComponent<SurferPlayer>();
             Rigidbody currentBody = GetComponent<Rigidbody>();
 
             if(currentBody.velocity.magnitude > minLimbVelocity && otherPlayerStats != null && playerStats.PlayerID != otherPlayerStats.PlayerID)

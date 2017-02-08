@@ -25,7 +25,7 @@ public class PlayerSpawner : Singleton<PlayerSpawner>
             for (int i = 0; i < playerAmount; i++)
             {
                 GameObject newPlayer = GameObject.Instantiate(playerPrefab, spawnPositions[i].position, playerPrefab.transform.rotation);
-                PlayerStats playerStats = newPlayer.GetComponent<PlayerStats>();
+                Surfer surfer = newPlayer.GetComponent<Surfer>();
                 SurferControl control = newPlayer.GetComponent<SurferControl>();
 
                 PlayerLight pLight = playerLights[i];
@@ -34,9 +34,9 @@ public class PlayerSpawner : Singleton<PlayerSpawner>
                 pLight.GetComponent<Light>().enabled = true;
                 pLight.gameObject.SetActive(true);
                 pLight.followPlayer = control.gameObject;
-                playerStats.CurrentLight = pLight;
+                surfer.CurrentLight = pLight;
 
-                playerStats.PlayerID = i + 1;
+                ///surfer.PlayerID = i + 1;
                 spawnedPlayers.Add(newPlayer);
             }
         }

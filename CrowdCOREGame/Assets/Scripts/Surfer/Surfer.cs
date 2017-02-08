@@ -2,26 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A class for tracking base information about the surfer character
+/// </summary>
+[RequireComponent(typeof(SurferControl))]
 public class Surfer : MonoBehaviour {
 
-    public float MaxStamina = 100;
-    public float CurrentStamina = 100;
+    public enum SurferState
+    {
+        ALIVE = 0,
+        DEAD
+    }
 
-    public float rightTrigger = 0.0f;
-    public float leftTRigger = 0.0f;
+    [SerializeField]
+    private SurferControl control;
+    [SerializeField]
+    private SurferState currentState = SurferState.ALIVE;
+    [SerializeField]
+    private PlayerLight playerLight;
 
-	// Use this for initialization
-	void Start () {
-		
+    private SurferPlayer player;
+
+    public SurferState CurrentState { get { return currentState; } set { currentState = value; } }
+    public PlayerLight CurrentLight { get { return playerLight; } set { playerLight = value; } }
+
+    private int surferId = -1;
+    public int SurferId { get { return surferId; } }
+
+    // Use this for initialization
+    void Start () {
+        // TODO: Assert if we don't have a SurferPlayer
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        rightTrigger = Input.GetAxis("Right Trigger");
-        leftTRigger = Input.GetAxis("Left Trigger");
-
 	}
 
+    void OnCollisionEnter(Collision c)
+    {
+        if (c.gameObject.tag == "DeadZone")
+        {
+            if (currentState != Surfer.SurferState.DEAD)
+            {
+                control.enabled = false;
+                currentState = Surfer.SurferState.DEAD;
+                playerLight.enabled = false;
+                Light light = playerLight.GetComponent<Light>();
+                light.enabled = false;
 
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.OnPlayerDead(SurferId);
+                }
+
+                Debug.Log("Player " + SurferId + " is TOTALLY FUCKING DEAD!!! \\m/ >_< \\m/");
+            }
+        }
+    }
+
+    public void SetPlayer(SurferPlayer p)
+    {
+        if (player != null)
+        {
+            player = p;
+            surferId = player.PlayerID;
+        }
+    }
 }

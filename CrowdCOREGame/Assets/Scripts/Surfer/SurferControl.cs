@@ -2,7 +2,7 @@
 using UnityEngine;
 using RewiredConsts;
 
-[RequireComponent(typeof(PlayerStats))]
+[RequireComponent(typeof(Surfer))]
 public class SurferControl : MonoBehaviour
 {
     public enum PlayerState
@@ -17,6 +17,10 @@ public class SurferControl : MonoBehaviour
         CONSTANT,
         IMPULSE
     }
+
+    // Necessary for operation
+    [SerializeField]
+    private Surfer surfer;
 
     // TODO: These should really be rigidbodies
     [SerializeField] private Transform mainBody;
@@ -54,7 +58,6 @@ public class SurferControl : MonoBehaviour
 	public float strikeChargeTime = 0.5f;
 	public float strikePower;
 
-    private PlayerStats playerstats;
     private PlayerState currentState;
 
     // For display
@@ -62,28 +65,32 @@ public class SurferControl : MonoBehaviour
     [SerializeField] private float zMovement;
 
 
-    void Awake()
+    void Start()
 	{
-        playerstats = GetComponent<PlayerStats>();
-        playerIn = Rewired.ReInput.players.GetPlayer(playerstats.PlayerID);
+        int surferId = surfer.SurferId;
 
-        start = headBone.localRotation * Quaternion.Euler(transform.right * minRot);
-		end = headBone.localRotation * Quaternion.Euler(transform.right * maxRot);
+        // TODO: Assert if we aren't > 0
+        if(surferId > 0)
+        {
+            playerIn = Rewired.ReInput.players.GetPlayer(surferId);
 
-        for (int i=0; i < playerShirt.Count; i++)
-		{
-			if(i != 0)
-			{
-				Material[] currentMats = playerShirt[i].materials;
-				currentMats[1] = playerShirtMaterials[playerstats.PlayerID-1];
-				playerShirt[i].materials = currentMats;
+            start = headBone.localRotation * Quaternion.Euler(transform.right * minRot);
+            end = headBone.localRotation * Quaternion.Euler(transform.right * maxRot);
 
-			}
-			else
-			{
-				playerShirt[i].material = playerShirtMaterials[playerstats.PlayerID-1];
-			}
-		}
+            for (int i = 0; i < playerShirt.Count; i++)
+            {
+                if (i != 0)
+                {
+                    Material[] currentMats = playerShirt[i].materials;
+                    currentMats[1] = playerShirtMaterials[surferId - 1]; // why minus one
+                    playerShirt[i].materials = currentMats;
+                }
+                else
+                {
+                    playerShirt[i].material = playerShirtMaterials[surferId - 1]; // why minus one
+                }
+            }
+        }
 
         currentState = PlayerState.MOVING;
     }
@@ -107,6 +114,9 @@ public class SurferControl : MonoBehaviour
 
     private void ProcessInput()
     {
+        // Drop out if no one is controlling us
+        if (playerIn == null) return;
+
         // Test Controls
         if(playerIn.GetButtonDown("Punch"))
         {

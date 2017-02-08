@@ -165,10 +165,10 @@ public class GameManager : Singleton<GameManager>
             }
             foreach (GameObject player in PlayerSpawner.Instance.SpawnedPlayers)
             {
-                PlayerStats playerStat = player.GetComponent<PlayerStats>();
-                if(playerStat.CurrentState == PlayerStats.PlayerState.ALIVE)
+                Surfer surfer = player.GetComponent<Surfer>();
+                if(surfer.CurrentState == Surfer.SurferState.ALIVE)
                 {
-                    winner = playerStat.PlayerID;
+                    winner = surfer.SurferId;
                     ShowFinalMessage("Player " + winner + " Wins!");
                     messageTextSmall.text = "Press A to Restart";
                     currentState = GameState.RESULTS;
