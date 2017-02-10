@@ -67,28 +67,20 @@ public class SurferControl : MonoBehaviour
 
     void Start()
 	{
-        int surferId = surfer.SurferId;
+        start = headBone.localRotation * Quaternion.Euler(transform.right * minRot);
+        end = headBone.localRotation * Quaternion.Euler(transform.right * maxRot);
 
-        // TODO: Assert if we aren't > 0
-        if(surferId > 0)
+        for (int i = 0; i < playerShirt.Count; i++)
         {
-            playerIn = Rewired.ReInput.players.GetPlayer(surferId);
-
-            start = headBone.localRotation * Quaternion.Euler(transform.right * minRot);
-            end = headBone.localRotation * Quaternion.Euler(transform.right * maxRot);
-
-            for (int i = 0; i < playerShirt.Count; i++)
+            if (i != 0)
             {
-                if (i != 0)
-                {
-                    Material[] currentMats = playerShirt[i].materials;
-                    currentMats[1] = playerShirtMaterials[surferId - 1]; // why minus one
-                    playerShirt[i].materials = currentMats;
-                }
-                else
-                {
-                    playerShirt[i].material = playerShirtMaterials[surferId - 1]; // why minus one
-                }
+                Material[] currentMats = playerShirt[i].materials;
+                currentMats[1] = playerShirtMaterials[0]; // Change material
+                playerShirt[i].materials = currentMats;
+            }
+            else
+            {
+                playerShirt[i].material = playerShirtMaterials[0]; // Change material
             }
         }
 
@@ -105,6 +97,23 @@ public class SurferControl : MonoBehaviour
         }
 	}
 
+    public void SetPlayerInput(int playerId)
+    {
+        if(playerId >= 0)
+        {
+            playerIn = Rewired.ReInput.players.GetPlayer(playerId);
+        }
+    }
+
+    public void LimbStrike(Transform limb)
+    {
+        Vector3 bodyPosition = mainBody.position;
+        Vector3 strikeDirection = (limb.position - bodyPosition);
+
+        limb.transform.position += strikeDirection / 2;
+        limb.gameObject.GetComponent<Rigidbody>().AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
+    }
+
     private void UpdateHeadbanging()
     {
         // Head Bang
@@ -116,15 +125,15 @@ public class SurferControl : MonoBehaviour
     {
         // Drop out if no one is controlling us
         if (playerIn == null) return;
-
+         
         // Test Controls
-        if(playerIn.GetButtonDown("Punch"))
+        if(playerIn.GetButtonDown(Action.Punch))
         {
             LimbStrike(leftArm);
             LimbStrike(rightArm);
         }
             
-        if (playerIn.GetButtonDown("Kick"))
+        if (playerIn.GetButtonDown(Action.Kick))
         {
             LimbStrike(leftLeg);
             LimbStrike(rightLeg);
@@ -145,14 +154,5 @@ public class SurferControl : MonoBehaviour
 
                 break;
         }
-    }
-
-	public void LimbStrike (Transform limb)
-	{
-		Vector3 bodyPosition = mainBody.position;
-		Vector3 strikeDirection = (limb.position - bodyPosition);
-
-        limb.transform.position += strikeDirection / 2;
-		limb.gameObject.GetComponent<Rigidbody>().AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
     }
 }

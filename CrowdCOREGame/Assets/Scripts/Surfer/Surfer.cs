@@ -21,17 +21,22 @@ public class Surfer : MonoBehaviour {
     [SerializeField]
     private PlayerLight playerLight;
 
+    [SerializeField]
     private SurferPlayer player;
 
     public SurferState CurrentState { get { return currentState; } set { currentState = value; } }
     public PlayerLight CurrentLight { get { return playerLight; } set { playerLight = value; } }
 
-    private int surferId = -1;
-    public int SurferId { get { return surferId; } }
+    private int playerId = -1;
+    public int SurferId { get { return playerId; } }
 
     // Use this for initialization
     void Start () {
-        // TODO: Assert if we don't have a SurferPlayer
+        Debug.Assert(player != null, "Please make sure that the surfer is associated with a SurferPlayer");
+
+        // If we start with a player, make sure to perform the set.
+        // Generally a prefab of the surfer should not automatically include a player
+        if (player != null) SetPlayer(player);
 	}
 	
 	// Update is called once per frame
@@ -66,7 +71,8 @@ public class Surfer : MonoBehaviour {
         if (player != null)
         {
             player = p;
-            surferId = player.PlayerID;
+            playerId = player.PlayerID;
+            control.SetPlayerInput(playerId);
         }
     }
 }

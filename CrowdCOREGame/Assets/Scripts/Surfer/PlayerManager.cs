@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
 
-public class PlayerManager : MonoBehaviour {
+public class PlayerManager : Singleton<PlayerManager>
+{
 
     private bool isSearching = false;
 
     // TODO: protect this?
     public List<SurferPlayer> Players;
+    public int NumPlayers { get { return Players.Count; } }
 
 	// Use this for initialization
 	void Start () {
@@ -24,7 +26,7 @@ public class PlayerManager : MonoBehaviour {
             int playerCount = ReInput.players.playerCount;
             for(int i = 0; i < playerCount; i++)
             {
-                if(ReInput.players.GetPlayer(i).GetButtonDown("JoinGame"))
+                if(ReInput.players.GetPlayer(i).GetButtonDown(RewiredConsts.Action.Accept))
                 {
                     SurferPlayer newPlayer = new SurferPlayer(i);
                     Players.Add(newPlayer);

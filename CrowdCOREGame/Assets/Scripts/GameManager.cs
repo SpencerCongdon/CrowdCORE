@@ -105,8 +105,10 @@ public class GameManager : Singleton<GameManager>
             case GameState.HOW_TO:
                 currentState = GameState.PLAYER_SELECT;
                 SceneManager.LoadScene("PlayerSelect");
+                PlayerManager.Instance.StartSearchingForUsers();
                 break;
             case GameState.PLAYER_SELECT:
+                PlayerManager.Instance.StopSearching();
                 Initialize();
                 break;
         }
