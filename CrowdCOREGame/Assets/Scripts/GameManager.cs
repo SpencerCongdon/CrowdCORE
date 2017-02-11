@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(PlayerSpawner))]
+[RequireComponent(typeof(SurferSpawner))]
 public class GameManager : Singleton<GameManager>
 {
     private enum GameState
@@ -92,7 +92,8 @@ public class GameManager : Singleton<GameManager>
                 {
                     for (int i = 0; i < PlayerManager.Instance.NumPlayers; i++)
                     {
-                        if(Rewired.ReInput.players.GetPlayer(i).GetButtonDown(RewiredConsts.Action.Accept))
+                        SurferPlayer p = PlayerManager.Instance.Players[i];
+                        if(Rewired.ReInput.players.GetPlayer(p.PlayerID).GetButtonDown(RewiredConsts.ACTION.Accept))
                         {
                             AdvanceScreen();
                         }
@@ -177,7 +178,7 @@ public class GameManager : Singleton<GameManager>
                 Camera.main.GetComponent<CameraController>().StartCutting();
                 return;
             }
-            foreach (GameObject player in PlayerSpawner.Instance.SpawnedPlayers)
+            foreach (GameObject player in SurferSpawner.Instance.SpawnedPlayers)
             {
                 Surfer surfer = player.GetComponent<Surfer>();
                 if(surfer.CurrentState == Surfer.SurferState.ALIVE)
@@ -202,7 +203,7 @@ public class GameManager : Singleton<GameManager>
         ShowBigMessage("2");
         yield return new WaitForSeconds(1);
 
-        PlayerSpawner.Instance.Spawn(GameManager.Instance.NumPlayers, playerPrefab);
+        SurferSpawner.Instance.Spawn(playerPrefab);
 
         ShowBigMessage("1");
         yield return new WaitForSeconds(1);
@@ -247,11 +248,11 @@ public class GameManager : Singleton<GameManager>
             yield return null;
         }
 
-        for(int i = 0; i < PlayerSpawner.Instance.SpawnedPlayers.Count; i++)
+        for(int i = 0; i < SurferSpawner.Instance.SpawnedPlayers.Count; i++)
         {
-            if(PlayerSpawner.Instance.SpawnedPlayers[i] != null)
+            if(SurferSpawner.Instance.SpawnedPlayers[i] != null)
             {
-                GameObject.Destroy(PlayerSpawner.Instance.SpawnedPlayers[i]);
+                GameObject.Destroy(SurferSpawner.Instance.SpawnedPlayers[i]);
             }
         }
 

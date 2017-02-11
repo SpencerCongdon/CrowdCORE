@@ -1,12 +1,12 @@
 /* Rewired Constants
-   This list was generated on 2/10/2017 9:07:30 PM
+   This list was generated on 2/10/2017 10:25:06 PM
    The list applies to only the Rewired Input Manager from which it was generated.
    If you use a different Rewired Input Manager, you will have to generate a new list.
    If you make changes to the exported items in the Rewired Input Manager, you will need to regenerate this list.
 */
 
 namespace RewiredConsts {
-    public static class Action {
+    public static class ACTION {
         // Default
         [Rewired.Dev.ActionIdFieldInfo(categoryName = "Default", friendlyName = "For joining the game")]
         public const int JoinGame = 10;

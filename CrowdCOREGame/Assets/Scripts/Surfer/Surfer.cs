@@ -26,6 +26,7 @@ public class Surfer : MonoBehaviour {
 
     public SurferState CurrentState { get { return currentState; } set { currentState = value; } }
     public PlayerLight CurrentLight { get { return playerLight; } set { playerLight = value; } }
+    public Transform MainBody { get { return control.MainBody; } }
 
     private int playerId = -1;
     public int SurferId { get { return playerId; } }
@@ -68,7 +69,7 @@ public class Surfer : MonoBehaviour {
 
     public void SetPlayer(SurferPlayer p)
     {
-        if (player != null)
+        if (player == null)
         {
             player = p;
             playerId = player.PlayerID;

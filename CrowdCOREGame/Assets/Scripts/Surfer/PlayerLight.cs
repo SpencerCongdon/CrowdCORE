@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerLight : MonoBehaviour
 {
-    public GameObject followPlayer;
+    public Surfer followSurfer;
     public float offset = 1.0f;
 
     void Start ()
@@ -13,11 +13,11 @@ public class PlayerLight : MonoBehaviour
 
 	void Update ()
     {
-        if(followPlayer!= null)
+        if(followSurfer!= null)
         {
-            this.transform.position = new Vector3(followPlayer.transform.position.x,
-                                      followPlayer.transform.position.y + offset,
-                                      followPlayer.transform.position.z);
+            this.transform.position = new Vector3(followSurfer.MainBody.position.x,
+                                      followSurfer.MainBody.position.y + offset,
+                                      followSurfer.MainBody.position.z);
         }
     }
 }

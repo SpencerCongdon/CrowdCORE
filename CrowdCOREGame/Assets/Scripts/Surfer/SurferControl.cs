@@ -29,6 +29,8 @@ public class SurferControl : MonoBehaviour
     [SerializeField] private Transform rightLeg;
     [SerializeField] private Transform leftLeg;
 
+    public Transform MainBody { get { return mainBody; } }
+
     // Movement
     [SerializeField]
     private MovementType movementType;
@@ -102,6 +104,7 @@ public class SurferControl : MonoBehaviour
         if(playerId >= 0)
         {
             playerIn = Rewired.ReInput.players.GetPlayer(playerId);
+            playerIn.controllers.maps.SetMapsEnabled(true, Category.Surfer);
         }
     }
 
@@ -127,13 +130,13 @@ public class SurferControl : MonoBehaviour
         if (playerIn == null) return;
          
         // Test Controls
-        if(playerIn.GetButtonDown(Action.Punch))
+        if(playerIn.GetButtonDown(ACTION.Punch))
         {
             LimbStrike(leftArm);
             LimbStrike(rightArm);
         }
             
-        if (playerIn.GetButtonDown(Action.Kick))
+        if (playerIn.GetButtonDown(ACTION.Kick))
         {
             LimbStrike(leftLeg);
             LimbStrike(rightLeg);
@@ -143,8 +146,8 @@ public class SurferControl : MonoBehaviour
         {
             case MovementType.CONSTANT:
                 {
-                    xMovement = playerIn.GetAxis(Action.MoveHorizontal);
-                    zMovement = playerIn.GetAxis(Action.MoveVertical);
+                    xMovement = playerIn.GetAxis(ACTION.MoveHorizontal);
+                    zMovement = playerIn.GetAxis(ACTION.MoveVertical);
                     Vector3 topDirection = new Vector3(xMovement, 0, zMovement);
                     mainBody.gameObject.GetComponent<Rigidbody>().AddForce(topDirection.normalized * topPower);
                     break;

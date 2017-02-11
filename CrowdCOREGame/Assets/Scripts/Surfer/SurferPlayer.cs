@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// A class to hold any information about the player that is controlling a surfer
 /// </summary>
-public class SurferPlayer : MonoBehaviour
+public class SurferPlayer
 {
     [SerializeField] private int playerID;
     [SerializeField] private string playerName;
