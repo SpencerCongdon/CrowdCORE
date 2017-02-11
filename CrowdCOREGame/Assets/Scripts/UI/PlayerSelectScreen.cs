@@ -20,6 +20,18 @@ public class PlayerSelectScreen : MonoBehaviour
             if (NoControllerNotif != null) NoControllerNotif.SetActive(true);
             noControllers = true;
         }
+        else
+        {
+            foreach(SurferPlayer p in PlayerManager.Instance.Players)
+            {
+                int id = p.PlayerID;
+                PlayerIndicators[id].gameObject.SetActive(true);
+                PlayerIndicators[id].PlayerText.text = "Player: " + id;
+                PlayerIndicators[id].PlayerText.color = GameManager.Instance.PlayerColors[id];
+                PlayerIndicators[id].PlayerImage.color = GameManager.Instance.PlayerColors[id];
+            }
+            
+        }
     }
 
     void Update()
