@@ -13,34 +13,44 @@ public class PlayerSelectScreen : MonoBehaviour
 
     void Awake()
     {
-        if(GameManager.Instance.NumPlayers < 1)
+        PlayerManager.Instance.PlayerJoined.AddListener(OnPlayerJoined);
+
+        if(PlayerManager.Instance.NumPlayers < 1)
         {
             if (NoControllerNotif != null) NoControllerNotif.SetActive(true);
             noControllers = true;
         }
-
-        for(int i = 0; i < PlayerIndicators.Count; i++)
+        else
         {
-            if (i < GameManager.Instance.NumPlayers)
+            foreach(SurferPlayer p in PlayerManager.Instance.Players)
             {
-                PlayerIndicators[i].gameObject.SetActive(true);
-                PlayerIndicators[i].PlayerText.text = "Player: " + (i + 1);
-                PlayerIndicators[i].PlayerText.color = GameManager.Instance.PlayerColors[i];
-                PlayerIndicators[i].PlayerImage.color = GameManager.Instance.PlayerColors[i];
+                int id = p.PlayerID;
+                PlayerIndicators[id].gameObject.SetActive(true);
+                PlayerIndicators[id].PlayerText.text = "Player: " + id;
+                PlayerIndicators[id].PlayerText.color = GameManager.Instance.PlayerColors[id];
+                PlayerIndicators[id].PlayerImage.color = GameManager.Instance.PlayerColors[id];
             }
-            else
-            {
-                PlayerIndicators[i].gameObject.SetActive(false);
-            }
+            
         }
     }
 
     void Update()
     {
+        
+    }
+
+    private void OnPlayerJoined(SurferPlayer newPlayer)
+    {
+        int id = newPlayer.PlayerID;
+        PlayerIndicators[id].gameObject.SetActive(true);
+        PlayerIndicators[id].PlayerText.text = "Player: " + id;
+        PlayerIndicators[id].PlayerText.color = GameManager.Instance.PlayerColors[id];
+        PlayerIndicators[id].PlayerImage.color = GameManager.Instance.PlayerColors[id];
+
         if(noControllers)
         {
-            NoControllerCountdown -= Time.deltaTime;
-            if (NoControllerCountdown < 0f) GameManager.Instance.AdvanceScreen();
+            NoControllerNotif.SetActive(false);
+            noControllers = false;
         }
     }
 }

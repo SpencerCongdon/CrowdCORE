@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(PlayerSpawner))]
+[RequireComponent(typeof(SurferSpawner))]
 public class GameManager : Singleton<GameManager>
 {
     private enum GameState
@@ -81,10 +81,23 @@ public class GameManager : Singleton<GameManager>
                 break;
             case GameState.TITLE_SCREEN:
             case GameState.HOW_TO:
-            case GameState.PLAYER_SELECT:
                 if (Input.anyKeyDown)
                 {
                     AdvanceScreen();
+                }
+                break;
+            case GameState.PLAYER_SELECT:
+                // TODO: This should be moved to the screen prefab
+                if(PlayerManager.Instance.NumPlayers > 0)
+                {
+                    for (int i = 0; i < PlayerManager.Instance.NumPlayers; i++)
+                    {
+                        SurferPlayer p = PlayerManager.Instance.Players[i];
+                        if(Rewired.ReInput.players.GetPlayer(p.PlayerID).GetButtonDown(RewiredConsts.ACTION.Accept))
+                        {
+                            AdvanceScreen();
+                        }
+                    }
                 }
                 break;
         }
@@ -105,8 +118,10 @@ public class GameManager : Singleton<GameManager>
             case GameState.HOW_TO:
                 currentState = GameState.PLAYER_SELECT;
                 SceneManager.LoadScene("PlayerSelect");
+                PlayerManager.Instance.StartSearchingForUsers();
                 break;
             case GameState.PLAYER_SELECT:
+                PlayerManager.Instance.StopSearching();
                 Initialize();
                 break;
         }
@@ -163,12 +178,12 @@ public class GameManager : Singleton<GameManager>
                 Camera.main.GetComponent<CameraController>().StartCutting();
                 return;
             }
-            foreach (GameObject player in PlayerSpawner.Instance.SpawnedPlayers)
+            foreach (GameObject player in SurferSpawner.Instance.SpawnedPlayers)
             {
-                PlayerStats playerStat = player.GetComponent<PlayerStats>();
-                if(playerStat.CurrentState == PlayerStats.PlayerState.ALIVE)
+                Surfer surfer = player.GetComponent<Surfer>();
+                if(surfer.CurrentState == Surfer.SurferState.ALIVE)
                 {
-                    winner = playerStat.PlayerID;
+                    winner = surfer.SurferId;
                     ShowFinalMessage("Player " + winner + " Wins!");
                     messageTextSmall.text = "Press A to Restart";
                     currentState = GameState.RESULTS;
@@ -188,7 +203,7 @@ public class GameManager : Singleton<GameManager>
         ShowBigMessage("2");
         yield return new WaitForSeconds(1);
 
-        PlayerSpawner.Instance.Spawn(GameManager.Instance.NumPlayers, playerPrefab);
+        SurferSpawner.Instance.Spawn(playerPrefab);
 
         ShowBigMessage("1");
         yield return new WaitForSeconds(1);
@@ -233,11 +248,11 @@ public class GameManager : Singleton<GameManager>
             yield return null;
         }
 
-        for(int i = 0; i < PlayerSpawner.Instance.SpawnedPlayers.Count; i++)
+        for(int i = 0; i < SurferSpawner.Instance.SpawnedPlayers.Count; i++)
         {
-            if(PlayerSpawner.Instance.SpawnedPlayers[i] != null)
+            if(SurferSpawner.Instance.SpawnedPlayers[i] != null)
             {
-                GameObject.Destroy(PlayerSpawner.Instance.SpawnedPlayers[i]);
+                GameObject.Destroy(SurferSpawner.Instance.SpawnedPlayers[i]);
             }
         }
 

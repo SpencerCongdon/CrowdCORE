@@ -2,7 +2,7 @@
 using UnityEngine;
 using RewiredConsts;
 
-[RequireComponent(typeof(PlayerStats))]
+[RequireComponent(typeof(Surfer))]
 public class SurferControl : MonoBehaviour
 {
     public enum PlayerState
@@ -18,12 +18,18 @@ public class SurferControl : MonoBehaviour
         IMPULSE
     }
 
+    // Necessary for operation
+    [SerializeField]
+    private Surfer surfer;
+
     // TODO: These should really be rigidbodies
     [SerializeField] private Transform mainBody;
     [SerializeField] private Transform rightArm;
     [SerializeField] private Transform leftArm;
     [SerializeField] private Transform rightLeg;
     [SerializeField] private Transform leftLeg;
+
+    public Transform MainBody { get { return mainBody; } }
 
     // Movement
     [SerializeField]
@@ -54,7 +60,6 @@ public class SurferControl : MonoBehaviour
 	public float strikeChargeTime = 0.5f;
 	public float strikePower;
 
-    private PlayerStats playerstats;
     private PlayerState currentState;
 
     // For display
@@ -62,28 +67,24 @@ public class SurferControl : MonoBehaviour
     [SerializeField] private float zMovement;
 
 
-    void Awake()
+    void Start()
 	{
-        playerstats = GetComponent<PlayerStats>();
-        playerIn = Rewired.ReInput.players.GetPlayer(playerstats.PlayerID);
-
         start = headBone.localRotation * Quaternion.Euler(transform.right * minRot);
-		end = headBone.localRotation * Quaternion.Euler(transform.right * maxRot);
+        end = headBone.localRotation * Quaternion.Euler(transform.right * maxRot);
 
-        for (int i=0; i < playerShirt.Count; i++)
-		{
-			if(i != 0)
-			{
-				Material[] currentMats = playerShirt[i].materials;
-				currentMats[1] = playerShirtMaterials[playerstats.PlayerID-1];
-				playerShirt[i].materials = currentMats;
-
-			}
-			else
-			{
-				playerShirt[i].material = playerShirtMaterials[playerstats.PlayerID-1];
-			}
-		}
+        for (int i = 0; i < playerShirt.Count; i++)
+        {
+            if (i != 0)
+            {
+                Material[] currentMats = playerShirt[i].materials;
+                currentMats[1] = playerShirtMaterials[0]; // Change material
+                playerShirt[i].materials = currentMats;
+            }
+            else
+            {
+                playerShirt[i].material = playerShirtMaterials[0]; // Change material
+            }
+        }
 
         currentState = PlayerState.MOVING;
     }
@@ -98,6 +99,24 @@ public class SurferControl : MonoBehaviour
         }
 	}
 
+    public void SetPlayerInput(int playerId)
+    {
+        if(playerId >= 0)
+        {
+            playerIn = Rewired.ReInput.players.GetPlayer(playerId);
+            playerIn.controllers.maps.SetMapsEnabled(true, Category.Surfer);
+        }
+    }
+
+    public void LimbStrike(Transform limb)
+    {
+        Vector3 bodyPosition = mainBody.position;
+        Vector3 strikeDirection = (limb.position - bodyPosition);
+
+        limb.transform.position += strikeDirection / 2;
+        limb.gameObject.GetComponent<Rigidbody>().AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
+    }
+
     private void UpdateHeadbanging()
     {
         // Head Bang
@@ -107,14 +126,17 @@ public class SurferControl : MonoBehaviour
 
     private void ProcessInput()
     {
+        // Drop out if no one is controlling us
+        if (playerIn == null) return;
+         
         // Test Controls
-        if(playerIn.GetButtonDown("Punch"))
+        if(playerIn.GetButtonDown(ACTION.Punch))
         {
             LimbStrike(leftArm);
             LimbStrike(rightArm);
         }
             
-        if (playerIn.GetButtonDown("Kick"))
+        if (playerIn.GetButtonDown(ACTION.Kick))
         {
             LimbStrike(leftLeg);
             LimbStrike(rightLeg);
@@ -124,8 +146,8 @@ public class SurferControl : MonoBehaviour
         {
             case MovementType.CONSTANT:
                 {
-                    xMovement = playerIn.GetAxis(Action.MoveHorizontal);
-                    zMovement = playerIn.GetAxis(Action.MoveVertical);
+                    xMovement = playerIn.GetAxis(ACTION.MoveHorizontal);
+                    zMovement = playerIn.GetAxis(ACTION.MoveVertical);
                     Vector3 topDirection = new Vector3(xMovement, 0, zMovement);
                     mainBody.gameObject.GetComponent<Rigidbody>().AddForce(topDirection.normalized * topPower);
                     break;
@@ -135,14 +157,5 @@ public class SurferControl : MonoBehaviour
 
                 break;
         }
-    }
-
-	public void LimbStrike (Transform limb)
-	{
-		Vector3 bodyPosition = mainBody.position;
-		Vector3 strikeDirection = (limb.position - bodyPosition);
-
-        limb.transform.position += strikeDirection / 2;
-		limb.gameObject.GetComponent<Rigidbody>().AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
     }
 }
