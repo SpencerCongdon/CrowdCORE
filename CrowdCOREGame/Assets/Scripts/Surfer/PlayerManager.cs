@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Rewired;
+using RewiredConsts;
 
 public class PlayerManager : Singleton<PlayerManager>
 {
@@ -26,10 +27,13 @@ public class PlayerManager : Singleton<PlayerManager>
             int playerCount = ReInput.players.playerCount;
             for(int i = 0; i < playerCount; i++)
             {
-                if(ReInput.players.GetPlayer(i).GetButtonDown(RewiredConsts.Action.Accept))
+                Player p = ReInput.players.GetPlayer(i);
+                if (p.GetButtonDown(Action.JoinGame))
                 {
                     SurferPlayer newPlayer = new SurferPlayer(i);
                     Players.Add(newPlayer);
+                    p.controllers.maps.SetMapsEnabled(false, Category.Assignment);
+                    p.controllers.maps.SetMapsEnabled(true, Category.Menu);
                 }
             }
         }

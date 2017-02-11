@@ -81,10 +81,22 @@ public class GameManager : Singleton<GameManager>
                 break;
             case GameState.TITLE_SCREEN:
             case GameState.HOW_TO:
-            case GameState.PLAYER_SELECT:
                 if (Input.anyKeyDown)
                 {
                     AdvanceScreen();
+                }
+                break;
+            case GameState.PLAYER_SELECT:
+                // TODO: This should be moved to the screen prefab
+                if(PlayerManager.Instance.NumPlayers > 0)
+                {
+                    for (int i = 0; i < PlayerManager.Instance.NumPlayers; i++)
+                    {
+                        if(Rewired.ReInput.players.GetPlayer(i).GetButtonDown(RewiredConsts.Action.Accept))
+                        {
+                            AdvanceScreen();
+                        }
+                    }
                 }
                 break;
         }
