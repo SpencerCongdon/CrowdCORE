@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class SurferCamera : MonoBehaviour
 {
     // Vertical
     public float MaxYPos = 16.5f;
