@@ -175,7 +175,7 @@ public class GameManager : Singleton<GameManager>
                 messageTextSmall.text = "Press Any button to Restart";
                 currentState = GameState.RESULTS;
                 winner = 1;
-                Camera.main.GetComponent<CameraController>().StartCutting();
+                Camera.main.GetComponent<SurferCamera>().StartCutting();
                 return;
             }
             foreach (GameObject player in SurferSpawner.Instance.SpawnedPlayers)
@@ -187,7 +187,7 @@ public class GameManager : Singleton<GameManager>
                     ShowFinalMessage("Player " + winner + " Wins!");
                     messageTextSmall.text = "Press A to Restart";
                     currentState = GameState.RESULTS;
-                    Camera.main.GetComponent<CameraController>().StartCutting();
+                    Camera.main.GetComponent<SurferCamera>().StartCutting();
                 }
             }
         }
@@ -243,7 +243,7 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator DelayForEnd()
     {
-        while(!Camera.main.GetComponent<CameraController>().CanProgressGameState)
+        while(!Camera.main.GetComponent<SurferCamera>().CanProgressGameState)
         {
             yield return null;
         }
@@ -264,7 +264,7 @@ public class GameManager : Singleton<GameManager>
     }
     private void RestartGame()
     {
-        Camera.main.GetComponent<CameraController>().CameraCutting = false;
+        Camera.main.GetComponent<SurferCamera>().CameraCutting = false;
         StartCoroutine(DelayForEnd());
     }
 }
