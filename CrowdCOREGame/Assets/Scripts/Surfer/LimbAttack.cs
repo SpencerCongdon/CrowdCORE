@@ -20,6 +20,7 @@ public class LimbAttack : MonoBehaviour
                 parent = parent.parent;
             }
 
+            // TODO: We need to make sure we are hitting a player before we do this
             SurferPlayer otherPlayerStats = parent.GetComponent<SurferPlayer>();
             Rigidbody currentBody = GetComponent<Rigidbody>();
 

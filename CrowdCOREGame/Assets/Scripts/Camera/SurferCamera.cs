@@ -17,8 +17,8 @@ public class SurferCamera : MonoBehaviour
     public bool GoingRight = true;
 
     // Look At
-    public GameObject HighPoint;
-    public GameObject LowPoint;
+    public Transform HighPoint;
+    public Transform LowPoint;
 
     // Active Movements
     public bool MoveX;
@@ -100,7 +100,7 @@ public class SurferCamera : MonoBehaviour
             if (verKeepLerping)
             {
                 float progress = verTime / VertLerpTime;
-                Vector3 lookLerp =  Vector3.Lerp(LowPoint.transform.position, HighPoint.transform.position, progress);
+                Vector3 lookLerp =  Vector3.Lerp(LowPoint.transform.position, HighPoint.position, progress);
                 gameObject.transform.LookAt(lookLerp);
             }
         }
@@ -114,7 +114,7 @@ public class SurferCamera : MonoBehaviour
     {
         if (LowPoint != null)
         {
-            gameObject.transform.LookAt(LowPoint.transform);
+            gameObject.transform.LookAt(LowPoint);
         }
         else
         {

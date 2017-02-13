@@ -22,6 +22,9 @@ public class Surfer : MonoBehaviour {
     private PlayerLight playerLight;
 
     [SerializeField]
+    [Tooltip("DEBUG: If false, this will auto assign a player id to the surfer")]
+    private bool requirePlayer = true;
+
     private SurferPlayer player;
 
     public SurferState CurrentState { get { return currentState; } set { currentState = value; } }
@@ -33,11 +36,29 @@ public class Surfer : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Debug.Assert(player != null, "Please make sure that the surfer is associated with a SurferPlayer");
+        if(requirePlayer)
+        {
+            Debug.Assert(player != null, "Please make sure that the surfer is associated with a SurferPlayer");
 
-        // If we start with a player, make sure to perform the set.
-        // Generally a prefab of the surfer should not automatically include a player
-        if (player != null) SetPlayer(player);
+            // If we start with a player, make sure to perform the set.
+            // Generally a prefab of the surfer should not automatically include a player
+            if (player != null) SetPlayer(player);
+        }
+        else
+        {
+            // Try anyway
+            if (player != null)
+            {
+                SetPlayer(player);
+            }
+            else if(Rewired.ReInput.isReady && Rewired.ReInput.players.playerCount > 0)
+            {
+                // Just take a stab at it
+                SetPlayer(new SurferPlayer(0));
+            }
+        }
+
+        
 	}
 	
 	// Update is called once per frame
