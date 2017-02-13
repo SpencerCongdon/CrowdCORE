@@ -31,11 +31,15 @@ public class Surfer : MonoBehaviour {
     public PlayerLight CurrentLight { get { return playerLight; } set { playerLight = value; } }
     public Transform MainBody { get { return control.MainBody; } }
 
+    [SerializeField]
+    private Collider mainCollider;
+
     private int playerId = -1;
     public int SurferId { get { return playerId; } }
 
     // Use this for initialization
     void Start () {
+
         if(requirePlayer)
         {
             Debug.Assert(player != null, "Please make sure that the surfer is associated with a SurferPlayer");
@@ -58,35 +62,35 @@ public class Surfer : MonoBehaviour {
             }
         }
 
-        
-	}
-	
-	// Update is called once per frame
-	void Update () {
 
-	}
+    }
 
-    void OnCollisionEnter(Collision c)
+    
+    public void OnHitDeadZone()
     {
-        if (c.gameObject.tag == "DeadZone")
+        if (currentState != Surfer.SurferState.DEAD)
         {
-            if (currentState != Surfer.SurferState.DEAD)
+            control.enabled = false;
+            currentState = Surfer.SurferState.DEAD;
+            playerLight.enabled = false;
+            Light light = playerLight.GetComponent<Light>();
+            light.enabled = false;
+
+            if (GameManager.Instance != null)
             {
-                control.enabled = false;
-                currentState = Surfer.SurferState.DEAD;
-                playerLight.enabled = false;
-                Light light = playerLight.GetComponent<Light>();
-                light.enabled = false;
-
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.OnPlayerDead(SurferId);
-                }
-
-                Debug.Log("Player " + SurferId + " is TOTALLY FUCKING DEAD!!! \\m/ >_< \\m/");
+                GameManager.Instance.OnPlayerDead(SurferId);
             }
+
+            Debug.Log("Player " + SurferId + " is TOTALLY FUCKING DEAD!!! \\m/ >_< \\m/");
         }
     }
+
+    // Update is called once per frame
+    void Update () {
+
+	}
+
+    
 
     public void SetPlayer(SurferPlayer p)
     {

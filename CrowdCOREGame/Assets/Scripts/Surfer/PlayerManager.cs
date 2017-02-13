@@ -15,7 +15,7 @@ public class PlayerManager : Singleton<PlayerManager>
     public List<SurferPlayer> Players = new List<SurferPlayer>();
     public int NumPlayers { get { return Players.Count; } }
 
-    public PlayerJoinedEvent PlayerJoined;
+    public CCEvents.PlayerJoined PlayerJoined;
 
 	// Use this for initialization
 	void Start () {
@@ -63,10 +63,4 @@ public class PlayerManager : Singleton<PlayerManager>
     {
         Players.Clear();
     }
-}
-
-[Serializable]
-public class PlayerJoinedEvent : UnityEvent<SurferPlayer>
-{
-
 }
