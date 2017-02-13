@@ -32,8 +32,6 @@ public class SurferSpawner : Singleton<SurferSpawner>
             Surfer surfer = surferPrefab.GetComponent<Surfer>();
             surfer.SetPlayer(player);
 
-            SurferControl control = surferPrefab.GetComponent<SurferControl>();
-
             // TODO: I feel like player lights should be tracking each player themselves - write new code for these
             PlayerLight pLight = playerLights[i];
             pLight.GetComponent<Light>().color = GameManager.Instance.PlayerColors[i];

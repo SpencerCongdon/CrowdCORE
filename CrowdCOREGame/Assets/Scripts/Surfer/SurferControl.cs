@@ -50,11 +50,14 @@ public class SurferControl : MonoBehaviour
 	private Quaternion start;
 	private Quaternion end;
 
-
     private Rewired.Player playerIn;
 
 	public List<Material> playerShirtMaterials;
 	public List<SkinnedMeshRenderer> playerShirt;
+
+    private Camera surfCamera;
+    [SerializeField]
+    private bool isCameraRelative = true;
 
     // Striking
 	public float strikeChargeTime = 0.5f;
@@ -62,9 +65,9 @@ public class SurferControl : MonoBehaviour
 
     private PlayerState currentState;
 
-    // For display
-    [SerializeField] private float xMovement;
-    [SerializeField] private float zMovement;
+    [SerializeField] private float xMoveInput;
+    [SerializeField] private float zMoveInput;
+    [SerializeField] private Vector3 lastMovement;
 
 
     void Start()
@@ -72,6 +75,7 @@ public class SurferControl : MonoBehaviour
         start = headBone.localRotation * Quaternion.Euler(transform.right * minRot);
         end = headBone.localRotation * Quaternion.Euler(transform.right * maxRot);
 
+        // TODO: Why is this part of control
         for (int i = 0; i < playerShirt.Count; i++)
         {
             if (i != 0)
@@ -86,11 +90,14 @@ public class SurferControl : MonoBehaviour
             }
         }
 
+        surfCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+
         currentState = PlayerState.MOVING;
     }
 
 	void Update () 
 	{
+        // TODO: Why is headbanging part of control?
         UpdateHeadbanging();
 
         if(currentState == PlayerState.MOVING)
@@ -146,16 +153,68 @@ public class SurferControl : MonoBehaviour
         {
             case MovementType.CONSTANT:
                 {
-                    xMovement = playerIn.GetAxis(ACTION.MoveHorizontal);
-                    zMovement = playerIn.GetAxis(ACTION.MoveVertical);
-                    Vector3 topDirection = new Vector3(xMovement, 0, zMovement);
-                    mainBody.gameObject.GetComponent<Rigidbody>().AddForce(topDirection.normalized * topPower);
+                    // Update these now
+                    xMoveInput = playerIn.GetAxis(ACTION.MoveHorizontal);
+                    zMoveInput = playerIn.GetAxis(ACTION.MoveVertical);
+
+                    Vector3 movement = Vector3.zero;
+                    if(isCameraRelative && surfCamera != null)
+                    {
+                        movement = CalculateRelativeMovement();
+                    }
+                    else
+                    {
+                        movement = CalculateNormalMovement();
+                    }
+
+                    lastMovement = movement;
+
+                    // Move if necessary
+                    if(movement != Vector3.zero)
+                    {
+                        mainBody.gameObject.GetComponent<Rigidbody>().AddForce(movement.normalized * topPower);
+                    }
+                    
                     break;
                 }
 
             case MovementType.IMPULSE:
 
                 break;
+        }
+    }
+
+    private Vector3 CalculateNormalMovement()
+    {
+        return new Vector3(xMoveInput, 0, zMoveInput);
+    }
+
+    private Vector3 CalculateRelativeMovement()
+    {
+        Vector3 move = (surfCamera.transform.right * xMoveInput) + (surfCamera.transform.forward * zMoveInput);
+        move.y = 0;
+        return move;
+    }
+
+    void OnDrawGizmos()
+    {
+        const float Y_POS = 0.1f;
+        const float SCALE = 10;
+
+        // Draw movement result
+        Gizmos.color = Color.blue;
+        Vector3 fromPoint = mainBody.position;
+        fromPoint.y = Y_POS;
+        Vector3 toPoint = new Vector3(fromPoint.x + (lastMovement.x * SCALE), Y_POS, fromPoint.z + (lastMovement.z * SCALE));
+        Gizmos.DrawLine(fromPoint, toPoint);
+
+        if(isCameraRelative)
+        {
+            // Draw camera forward
+            Gizmos.color = Color.red;
+            toPoint = fromPoint + (surfCamera.transform.forward * SCALE);
+            toPoint.y = Y_POS;
+            Gizmos.DrawLine(fromPoint, toPoint);
         }
     }
 }
