@@ -27,9 +27,6 @@ public class CrowdSpawner : MonoBehaviour {
         {
             Debug.LogWarning(this.name + " does not have a valid memberPrefab assigned.");
         }
-
-        if (ExitBox == null) Debug.Log("Crowd has no exit box");
-
 	}
 	
 	// Update is called once per frame
@@ -61,17 +58,17 @@ public class CrowdSpawner : MonoBehaviour {
             float memberX = rend.bounds.extents.x * 2f + MinSpacing;
             float memberZ = rend.bounds.extents.z * 2f + MinSpacing;
 
-            Debug.Log("SpawnCrowd() Members have bounds of " + memberX + "x and " + memberZ + "z");
+            //Debug.Log("SpawnCrowd() Members have bounds of " + memberX + "x and " + memberZ + "z");
 
             int membersPerX = (int)(CrowdSizeX / memberX);
             int membersPerZ = (int)(CrowdSizeZ / memberZ);
 
-            Debug.Log("SpawnCrowd() Number of members: " + membersPerX + "x and " + membersPerZ + "z");
+            //Debug.Log("SpawnCrowd() Number of members: " + membersPerX + "x and " + membersPerZ + "z");
 
             float xSpacing = CrowdSizeX / membersPerX;
             float zSpacing = CrowdSizeZ / membersPerZ;
 
-            Debug.Log("SpawnCrowd() Spacing: " + xSpacing + "x and " + zSpacing + "z");
+            //Debug.Log("SpawnCrowd() Spacing: " + xSpacing + "x and " + zSpacing + "z");
 
             DestroyImmediate(firstMember);
 

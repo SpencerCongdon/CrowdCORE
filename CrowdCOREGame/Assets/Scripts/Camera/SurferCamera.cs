@@ -126,6 +126,10 @@ public class SurferCamera : MonoBehaviour
     {
         int prevIndex = -1;
 
+        // Don't perform cuts if we don't have any
+        // TODO: We should probably build a separate camera class for pre/post game presentation
+        if (cameraCuts.Count < 1) yield break;
+
         Vector3 cachedPos = transform.localPosition;
         Vector3 cachedScale = transform.localScale;
         Quaternion cachedQuat = transform.rotation;

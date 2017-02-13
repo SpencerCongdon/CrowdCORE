@@ -20,19 +20,18 @@ public class GameManager : Singleton<GameManager>
     }
 
     [SerializeField] GameObject playerPrefab;
+    [SerializeField] GameObject inputManager;
     [SerializeField] int playerAmount;
     [SerializeField] Text messageText;
     [SerializeField] Text messageTextSmall;
     [SerializeField] Animator messageAnimator;
-    [SerializeField] GameObject inputManager;
+    
 
     public List<Color> PlayerColors;
 
     private GameState currentState;
     private int alivePlayersCounter;
     private int winner;
-
-    public int NumPlayers = 0;
 
     public override void Awake()
     {
@@ -42,24 +41,13 @@ public class GameManager : Singleton<GameManager>
         currentState = GameState.TITLE_SCREEN;
         SceneManager.LoadScene("TitleScene");
 
-        string[] joySticks = Input.GetJoystickNames();
-        for(int i = 0; i < joySticks.Length; i++)
-        {
-            Debug.Log(joySticks[i]);
-        }
-        NumPlayers = joySticks.Length;
-
-        if (NumPlayers > 4)
-        {
-            NumPlayers = 4;
-        }
-
-        Debug.Log("NumPlayers: " + NumPlayers);
+        
         base.Awake();
     }
 
     void Start ()
     {
+        
     }
 
     void Update()
@@ -122,15 +110,16 @@ public class GameManager : Singleton<GameManager>
                 break;
             case GameState.PLAYER_SELECT:
                 PlayerManager.Instance.StopSearching();
-                Initialize();
+                StartShow();
                 break;
         }
     }
 
-    private void Initialize()
+    private void StartShow()
     {
         currentState = GameState.COUNTDOWN;
-        alivePlayersCounter = GameManager.Instance.NumPlayers;
+
+        alivePlayersCounter = PlayerManager.Instance.NumPlayers;
         SceneManager.LoadScene("MainScene");
 
         StartCoroutine(DoCountdown());
@@ -139,7 +128,7 @@ public class GameManager : Singleton<GameManager>
     private void Restart()
     {
         currentState = GameState.COUNTDOWN;
-        alivePlayersCounter = GameManager.Instance.NumPlayers;
+        alivePlayersCounter = PlayerManager.Instance.NumPlayers;
 
         StartCoroutine(DoCountdown());
     }
@@ -169,7 +158,7 @@ public class GameManager : Singleton<GameManager>
         alivePlayersCounter--;
         if (alivePlayersCounter <= 1)
         {
-            if (GameManager.Instance.NumPlayers == 1)
+            if (PlayerManager.Instance.NumPlayers == 1)
             {
                 ShowFinalMessage("Nobody Wins!");
                 messageTextSmall.text = "Press Any button to Restart";
@@ -195,11 +184,9 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator DoCountdown()
     {
-        Debug.Log("Create Band");
         ShowBigMessage("3");
         yield return new WaitForSeconds(1);
 
-        Debug.Log("Create Crowd");
         ShowBigMessage("2");
         yield return new WaitForSeconds(1);
 

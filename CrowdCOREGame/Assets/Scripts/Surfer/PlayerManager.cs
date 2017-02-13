@@ -19,7 +19,6 @@ public class PlayerManager : Singleton<PlayerManager>
 
 	// Use this for initialization
 	void Start () {
-        Debug.Log("STARRT");
 	}
 	
 	// Update is called once per frame
