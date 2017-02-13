@@ -208,7 +208,7 @@ public class SurferControl : MonoBehaviour
         Vector3 toPoint = new Vector3(fromPoint.x + (lastMovement.x * SCALE), Y_POS, fromPoint.z + (lastMovement.z * SCALE));
         Gizmos.DrawLine(fromPoint, toPoint);
 
-        if(isCameraRelative)
+        if(isCameraRelative && surfCamera != null)
         {
             // Draw camera forward
             Gizmos.color = Color.red;
