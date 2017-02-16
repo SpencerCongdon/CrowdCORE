@@ -55,17 +55,20 @@ namespace CrowdCORE
         public void Start()
         {
             // This is not something we want to keep in the start.
-            StartCoroutine(DoScreenTransition(UIScreenId.Splash));
+            TransitionToScreen(UIScreenId.Splash);
         }
 
         public void Update()
         {
             // TODO: This is super hacky for now.
-            if(!mInputLock)
+            if(!mInputLock && mCurrentScreen != null && mCurrentScreen.CanNavigateBack)
             {
-                if (Input.GetButtonUp("AttackBot1"))
+                for (int i = 0; i < 4; i++)
                 {
-                    StartCoroutine(DoScreenTransition(mPreviousScreenId));
+                    if (Rewired.ReInput.players.GetPlayer(i).GetButtonDown(RewiredConsts.ACTION.Back))
+                    {
+                        TransitionToScreen(mPreviousScreenId);
+                    }
                 }
             }
         }
@@ -145,14 +148,14 @@ namespace CrowdCORE
         /// <param name="state"></param>
         public void Transition3dCamera(UIBackgroundState state)
         {
-            // Set the lock. 
-            m3dAnimLock = true;
             if(state != UIBackgroundState.None)
             {
                 if (state != mCurrent3dBackgroundState)
                 {
                     if (mAnimator != null)
                     {
+                        // Set the lock. 
+                        m3dAnimLock = true;
                         mAnimator.SetTrigger(GetAnimatorParamFromState(state));
                     }
                 }
@@ -172,6 +175,8 @@ namespace CrowdCORE
         /// <returns></returns>
         private string GetAnimatorParamFromState(UIBackgroundState state)
         {
+            // TODO: Fix this when we have more final animations
+            return "Switch";
             string param = "";
             switch (state)
             {
@@ -198,10 +203,10 @@ namespace CrowdCORE
                 {
                     case UINavigationType.Advance:
                         UIScreenId toScreen = buttonInfo.AdvanceScreen;
-                        StartCoroutine(DoScreenTransition(toScreen));
+                        TransitionToScreen(toScreen);
                         break;
                     case UINavigationType.Back:
-                        StartCoroutine(DoScreenTransition(mPreviousScreenId));
+                        TransitionToScreen(mPreviousScreenId);
                         break;
                     case UINavigationType.None:
                         break;
@@ -210,6 +215,15 @@ namespace CrowdCORE
                 }
             }
    
+        }
+
+        /// <summary>
+        /// Transition to a screen id.
+        /// </summary>
+        /// <param name="screenId"></param>
+        public void TransitionToScreen(UIScreenId screenId)
+        {
+            StartCoroutine(DoScreenTransition(screenId));
         }
 
         /// <summary>
@@ -226,6 +240,25 @@ namespace CrowdCORE
                     break;
                 case UIBackgroundAnimEvent.End:
                     m3dAnimLock = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Event handler for 2d animation events
+        /// </summary>
+        /// <param name="animEvent"></param>
+        public void OnUIScreenAnimEvent(UIScreenAnimEvent animEvent)
+        {
+            switch (animEvent)
+            {
+                case UIScreenAnimEvent.None:
+                    break;
+                case UIScreenAnimEvent.Start:
+                    break;
+                case UIScreenAnimEvent.End:
                     break;
                 default:
                     break;
@@ -252,7 +285,7 @@ namespace CrowdCORE
                     if(screen != null)
                     {
                         // Call set defaults and assign the current screen.
-                        screen.SetDefaults();
+                        screen.Initialize();
 
                         // Update our screen Ids
                         mPreviousScreenId = mCurrentScreenId;
@@ -273,7 +306,7 @@ namespace CrowdCORE
         {
             if(mCurrentScreen != null)
             {
-                // Do unload function? asset cleanup?
+                mCurrentScreen.Shutdown();
                 GameObject.Destroy(mCurrentScreen.gameObject);
             }
         }
@@ -322,6 +355,9 @@ namespace CrowdCORE
                 {
                     yield return null;
                 }
+
+                // Fire the 3d background animation.
+                UIManager.Instance.Transition3dCamera(mCurrentScreen.BackgroundState);
 
                 yield return StartCoroutine(mCurrentScreen.DoScreenAnimation(UIScreenAnimState.Intro));
                 mInputLock = false;

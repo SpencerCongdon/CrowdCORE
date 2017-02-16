@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Rewired;
+using RewiredConsts;
 
 namespace CrowdCORE
 {
@@ -25,6 +27,10 @@ namespace CrowdCORE
 
         [SerializeField]
         private Animator mAnimator;
+
+        [SerializeField]
+        private bool mCanBack;
+        public bool CanNavigateBack { get { return mCanBack; } }
 
         public virtual void Awake()
         {
@@ -52,11 +58,16 @@ namespace CrowdCORE
             return isValid;
         }
 
-        public void SetDefaults()
+        public virtual void Initialize()
         {
             transform.localPosition = mScreenPos;
             transform.localScale = mScreenScale;
             transform.localRotation = mScreenRotation;
+        }
+
+        public virtual void Shutdown()
+        {
+            Debug.Log("Shutting down screen: " + name);
         }
 
         public virtual void On3dUIBackgroundAnimEvent(UIBackgroundAnimEvent animEvent)
@@ -93,9 +104,6 @@ namespace CrowdCORE
 
         public virtual IEnumerator DoScreenAnimation(UIScreenAnimState state)
         {
-            // Fire the 3d background animation.
-            UIManager.Instance.Transition3dCamera(mBackgroundState);
-
             // Wait for the animation to finish.
             while(UIManager.Instance.IsAnimLocked)
             {

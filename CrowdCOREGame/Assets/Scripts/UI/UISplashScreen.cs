@@ -6,7 +6,7 @@ using RewiredConsts;
 
 namespace CrowdCORE
 {
-    public class UIMainMenuScreen : UIBaseScreen
+    public class UISplashScreen : UIBaseScreen
     {
         public override void Awake()
         {
@@ -27,6 +27,18 @@ namespace CrowdCORE
 
         public override void Update()
         {
+            if (!UIManager.Instance.IsInputLocked)
+            {
+                int playerCount = ReInput.players.playerCount;
+                for (int i = 0; i < playerCount; i++)
+                {
+                    Player p = ReInput.players.GetPlayer(i);
+                    if (p.GetAnyButtonDown())
+                    {
+                        UIManager.Instance.TransitionToScreen(UIScreenId.Warnings);
+                    }
+                }
+            }
             base.Update();
         }
     }

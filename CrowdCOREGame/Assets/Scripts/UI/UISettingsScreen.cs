@@ -6,7 +6,7 @@ using RewiredConsts;
 
 namespace CrowdCORE
 {
-    public class UIMainMenuScreen : UIBaseScreen
+    public class UISettingsScreen : UIBaseScreen
     {
         public override void Awake()
         {
