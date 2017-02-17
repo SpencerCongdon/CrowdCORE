@@ -22,6 +22,7 @@ namespace CrowdCORE
                 p.controllers.maps.SetMapsEnabled(true, Category.Menu);
 
             }
+
             base.Start();
         }
 

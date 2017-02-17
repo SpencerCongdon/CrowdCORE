@@ -64,4 +64,42 @@
         PauseMenu,
         Credits
     }
+
+    public enum InputPlatform
+    {
+        Win_Xbox,
+        Win_KB
+    }
+
+    public enum InputButton
+    {
+        None,
+        A,
+        B,
+        X,
+        Y,
+        BACK,
+        START,
+        RB,
+        LB,
+        RT,
+        LT,
+        LStick,
+        LStick_Left,
+        LStick_Right,
+        LStick_Up,
+        LStick_Down,
+        LStick_Press,
+        RStick,
+        RStick_Left,
+        RStick_Right,
+        RStick_Up,
+        RStick_Down,
+        RStick_Press,
+        DPad,
+        DPad_Left,
+        DPad_Right,
+        DPad_Up,
+        DPad_Down
+    }
 }

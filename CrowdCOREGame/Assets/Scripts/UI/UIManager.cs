@@ -20,12 +20,15 @@ namespace CrowdCORE
         private Canvas mCanvas;
 
         [SerializeField]
+        private UIPrompts mPrompts;
+        public UIPrompts Prompts { get { return mPrompts; } }
+
+        [SerializeField]
         private List<UIScreenPrefabInfo> mPrefabInfo;
 
         // State Variables
         private UIBackgroundState mCurrent3dBackgroundState = UIBackgroundState.None;
-        private UIScreenId mCurrentScreenId = UIScreenId.None;
-        private UIScreenId mPreviousScreenId = UIScreenId.None;
+        private Stack<UIScreenId> mScreenStack;
         private UIBaseScreen mCurrentScreen;
 
         // Animation Locks
@@ -38,7 +41,7 @@ namespace CrowdCORE
                 return m3dAnimLock || m2dAnimLock;
             }
         }
-        
+
         // Input Locks
         private bool mInputLock = false;
         public bool IsInputLocked { get { return mInputLock; } }
@@ -49,25 +52,27 @@ namespace CrowdCORE
         public override void Awake()
         {
             Debug.AssertFormat(ValidateManager() != false, "{0} : Failed to validate, please ensure that all required components are set and not null.", UIManager.Identifier);
+            mScreenStack = new Stack<UIScreenId>();
             base.Awake();
         }
 
         public void Start()
         {
             // This is not something we want to keep in the start.
+            mPrompts.SetPromptsPlatform(InputPlatform.Win_Xbox);
             TransitionToScreen(UIScreenId.Splash);
         }
 
         public void Update()
         {
             // TODO: This is super hacky for now.
-            if(!mInputLock && mCurrentScreen != null && mCurrentScreen.CanNavigateBack)
+            if (!mInputLock && mCurrentScreen != null && mCurrentScreen.CanNavigateBack)
             {
                 for (int i = 0; i < 4; i++)
                 {
                     if (Rewired.ReInput.players.GetPlayer(i).GetButtonDown(RewiredConsts.ACTION.Back))
                     {
-                        TransitionToScreen(mPreviousScreenId);
+                        DoBackTransition();
                     }
                 }
             }
@@ -148,7 +153,7 @@ namespace CrowdCORE
         /// <param name="state"></param>
         public void Transition3dCamera(UIBackgroundState state)
         {
-            if(state != UIBackgroundState.None)
+            if (state != UIBackgroundState.None)
             {
                 if (state != mCurrent3dBackgroundState)
                 {
@@ -197,7 +202,7 @@ namespace CrowdCORE
         /// <param name="buttonInfo"></param>
         public void OnUIInput(UIButtonInfo buttonInfo)
         {
-            if(!mInputLock)
+            if (!mInputLock)
             {
                 switch (buttonInfo.NavType)
                 {
@@ -206,7 +211,7 @@ namespace CrowdCORE
                         TransitionToScreen(toScreen);
                         break;
                     case UINavigationType.Back:
-                        TransitionToScreen(mPreviousScreenId);
+                        DoBackTransition();
                         break;
                     case UINavigationType.None:
                         break;
@@ -214,7 +219,20 @@ namespace CrowdCORE
                         break;
                 }
             }
-   
+        }
+
+        private void DoBackTransition()
+        {
+            if (mScreenStack.Count >= 2)
+            {
+                mScreenStack.Pop();
+                TransitionToScreen(mScreenStack.Peek());
+            }
+        }
+
+        public void ClearScreenStack()
+        {
+            mScreenStack.Clear();
         }
 
         /// <summary>
@@ -232,7 +250,7 @@ namespace CrowdCORE
         /// <param name="animEvent"></param>
         public void On3dUIBackgroundAnimEvent(UIBackgroundAnimEvent animEvent)
         {
-            switch(animEvent)
+            switch (animEvent)
             {
                 case UIBackgroundAnimEvent.None:
                     break;
@@ -269,33 +287,30 @@ namespace CrowdCORE
         /// Loads a screen based on it's screen id.
         /// </summary>
         /// <param name="screenId">Unique identifier for a screen.</param>
-        private void LoadScreen(UIScreenId screenId)
+        private UIBaseScreen LoadScreen(UIScreenId screenId)
         {
             GameObject screenPrefab = GetPrefabFromScreenId(screenId);
 
-            if(screenPrefab != null)
+            if (screenPrefab != null)
             {
                 // Instantiate the screen in the canvas.
                 GameObject instantiatedPrefab = GameObject.Instantiate(screenPrefab, mCanvas.transform);
 
-                if(instantiatedPrefab != null)
+                if (instantiatedPrefab != null)
                 {
                     UIBaseScreen screen = instantiatedPrefab.GetComponent<UIBaseScreen>();
 
-                    if(screen != null)
+                    if (screen != null)
                     {
                         // Call set defaults and assign the current screen.
                         screen.Initialize();
 
-                        // Update our screen Ids
-                        mPreviousScreenId = mCurrentScreenId;
-                        mCurrentScreenId = screenId;
-
-                        // Keep a reference of the screen as an object so we can destroy it or reference it's components.
-                        mCurrentScreen = screen;
+                        return screen;
                     }
                 }
             }
+
+            return null;
         }
 
         /// <summary>
@@ -304,7 +319,7 @@ namespace CrowdCORE
         /// </summary>
         private void UnloadCurrentScreen()
         {
-            if(mCurrentScreen != null)
+            if (mCurrentScreen != null)
             {
                 mCurrentScreen.Shutdown();
                 GameObject.Destroy(mCurrentScreen.gameObject);
@@ -340,26 +355,50 @@ namespace CrowdCORE
         private IEnumerator DoScreenTransition(UIScreenId screenId)
         {
             // if this is a new screen... (it should always be.)
-            if(screenId != mCurrentScreenId && screenId != UIScreenId.None)
+            if (screenId != UIScreenId.None)
             {
                 mInputLock = true;
+                bool canNavigateBackwards = false;
+
                 if (mCurrentScreen != null)
                 {
+                    canNavigateBackwards = mCurrentScreen.CanNavigateBack;
                     yield return StartCoroutine(mCurrentScreen.DoScreenAnimation(UIScreenAnimState.Outro));
                     UnloadCurrentScreen();
                 }
 
                 mPrefabLoadingLock = true;
-                LoadScreen(screenId);
-                while (mPrefabLoadingLock)
+                UIBaseScreen loadedScreen = LoadScreen(screenId);
+
+                if (loadedScreen != null)
                 {
-                    yield return null;
+                    while (mPrefabLoadingLock)
+                    {
+                        yield return null;
+                    }
+
+                    // If the current screen doesn't support back navigation, remove it from the stack.
+                    if (!canNavigateBackwards && mScreenStack.Count > 0)
+                    {
+                        mScreenStack.Pop();
+                    }
+
+                    mCurrentScreen = loadedScreen;
+
+                    // Back transitions can't add the screen twice.
+                    if (mScreenStack.Count == 0 || (mScreenStack.Count > 0 && screenId != mScreenStack.Peek()))
+                    {
+                        // Push the new screen onto the stack.
+                        mScreenStack.Push(screenId);
+                    }
+
+                    // Fire the 3d background animation.
+                    UIManager.Instance.Transition3dCamera(mCurrentScreen.BackgroundState);
+
+                    yield return StartCoroutine(mCurrentScreen.DoScreenAnimation(UIScreenAnimState.Intro));
+
+                    mCurrentScreen.SetPrompts();
                 }
-
-                // Fire the 3d background animation.
-                UIManager.Instance.Transition3dCamera(mCurrentScreen.BackgroundState);
-
-                yield return StartCoroutine(mCurrentScreen.DoScreenAnimation(UIScreenAnimState.Intro));
                 mInputLock = false;
             }
         }

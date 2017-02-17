@@ -58,6 +58,11 @@ namespace CrowdCORE
             return isValid;
         }
 
+        public virtual void SetPrompts()
+        {
+            Debug.Log("Setting Prompts for: " + name);
+        }
+
         public virtual void Initialize()
         {
             transform.localPosition = mScreenPos;
