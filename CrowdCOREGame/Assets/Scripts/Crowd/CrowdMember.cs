@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class CrowdMember : MonoBehaviour
 {
+    public enum JumpState
+    {
+        OnGround, 
+        GoingUp,
+        ComingDown
+    }
+
     [SerializeField]
     private CrowdEnums.InfluenceType mCurrentInfluence;
     public CrowdEnums.InfluenceType CurrentInfluence
@@ -14,6 +21,9 @@ public class CrowdMember : MonoBehaviour
 
     [SerializeField]
     private CrowdMember mCurrentInfluencer;
+
+    [SerializeField]
+    private JumpState mCurrentJumpState;
 
     [SerializeField]
     private float mInfluenceRadius = 0.5f; // <! Tunable
@@ -49,12 +59,13 @@ public class CrowdMember : MonoBehaviour
         get { return mCurrentJumpForce; }
     }
 
+    // Moshing
     [SerializeField]
     private float mMoshForce = 40000.0f;
 
+    // Surging
     [SerializeField]
     private float mSurgeForce = 20000.0f;
-
     [SerializeField]
     private float mSurgeJumpForce = 11000.0f;
 
@@ -65,14 +76,7 @@ public class CrowdMember : MonoBehaviour
 
     private float mSurgeTimer = 0.0f;
 
-    public bool IsFalling()
-    {
-        if(mRb.velocity.y < -0.01f)
-        {
-            return true;
-        }
-        return false;
-    }
+    
     
     void Awake()
     {
@@ -82,14 +86,16 @@ public class CrowdMember : MonoBehaviour
 
     void Update()
     {
-
+        
     }
 
     void FixedUpdate()
     {
+        UpdateJumpState();
+
         if (!mIsJumpDelayed)
         {
-            if (mCurrentInfluence == CrowdEnums.InfluenceType.None ||
+            if (mCurrentInfluence == CrowdEnums.InfluenceType.Normal ||
                 mCurrentInfluence == CrowdEnums.InfluenceType.Influencer)
             {
                 if (IsGrounded())
@@ -143,6 +149,26 @@ public class CrowdMember : MonoBehaviour
         }
     }
 
+    public void UpdateJumpState()
+    {
+        if (mCurrentJumpState == JumpState.GoingUp)
+        {
+            if (mRb.velocity.y < 0f)
+            {
+                mCurrentJumpState = JumpState.ComingDown;
+            }
+        }
+        else if (mCurrentJumpState == JumpState.ComingDown)
+        {
+            // Calculate if we've landed
+            if (Physics.Raycast(mFoot.position, -1.0f * mFoot.up, 0.1f))
+            {
+                mCurrentJumpState = JumpState.OnGround;
+            }
+        }
+    }
+
+
     public void DoJump()
     {
         if (mRb.velocity.y == 0.0f)
@@ -152,6 +178,8 @@ public class CrowdMember : MonoBehaviour
 
             Vector3 forceVect = new Vector3(randHoriX * mCurrentJumpForce, mCurrentJumpForce, randHoriZ * mCurrentJumpForce);
             mRb.AddForce(forceVect);
+
+            mCurrentJumpState = JumpState.GoingUp;
         }
 
         if (mHasJumpDelay)
@@ -162,19 +190,19 @@ public class CrowdMember : MonoBehaviour
 
     public bool IsGrounded()
     {
-        bool isGrounded = false;
-        if (Physics.Raycast(mFoot.position, -1.0f * mFoot.up, 0.1f))
-        {
-            isGrounded = true;
-        } 
-        return isGrounded;
+        return mCurrentJumpState == JumpState.OnGround;
+    }
+
+    public bool IsFalling()
+    {
+        return mCurrentJumpState == JumpState.ComingDown;
     }
 
     private IEnumerator ClearInfluence()
     {
         yield return new WaitForSeconds(mInfluenceTime);
         mCurrentInfluencer = null;
-        mCurrentInfluence = CrowdEnums.InfluenceType.None;
+        mCurrentInfluence = CrowdEnums.InfluenceType.Normal;
         mHasJumpDelay = false;
     }
 
@@ -211,7 +239,7 @@ public class CrowdMember : MonoBehaviour
                     if (crowdie != null)
                     {
                         // Only influence those who are not influenced.
-                        if (crowdie.CurrentInfluence == CrowdEnums.InfluenceType.None)
+                        if (crowdie.CurrentInfluence == CrowdEnums.InfluenceType.Normal)
                         {
                             data.Count--;
                             crowdie.OnInfluenced(data);
@@ -224,7 +252,7 @@ public class CrowdMember : MonoBehaviour
 
     public void OnInfluenced(CrowdInfluenceData data)
     {
-        if (mCurrentInfluence == CrowdEnums.InfluenceType.None)
+        if (mCurrentInfluence == CrowdEnums.InfluenceType.Normal)
         {   
             // Store the influence
             mCurrentInfluencer = data.Influencer;

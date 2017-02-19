@@ -56,7 +56,7 @@ public class CrowdManager : Singleton<CrowdManager>
             float waitTime = Random.Range(mMinLogicTime, mMaxLogicTIme);
             yield return new WaitForSeconds(waitTime);
             // Make decision
-            CrowdEnums.InfluenceType randInfluence = CrowdEnums.InfluenceType.None;
+            CrowdEnums.InfluenceType randInfluence = CrowdEnums.InfluenceType.Normal;
             randInfluence = GetRandomWeightedInfluence();
 
             int randNumInfluencers = Random.Range(1, mMaxInfluencers);
@@ -97,7 +97,7 @@ public class CrowdManager : Singleton<CrowdManager>
 
     private CrowdEnums.InfluenceType GetRandomWeightedInfluence()
     {
-        CrowdEnums.InfluenceType rand = CrowdEnums.InfluenceType.None;
+        CrowdEnums.InfluenceType rand = CrowdEnums.InfluenceType.Normal;
         float randVal = Random.Range(0.0f, 1.0f);
         if(randVal <= 0.05f)
         {
