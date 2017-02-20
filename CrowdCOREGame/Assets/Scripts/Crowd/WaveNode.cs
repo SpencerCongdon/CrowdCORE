@@ -24,18 +24,6 @@ public class WaveNode : MonoBehaviour
 
     public void StartWave()
     {
-
-
-        //Collider[] hitColliders = Physics.OverlapBox(this.transform.position, new Vector3(waveHalfWidth, 0f, waveHalfExtent));
-        //foreach (Collider c in hitColliders)
-        //{
-        //    if (c.attachedRigidbody != null)
-        //    {
-        //        Vector3 pushVector = (c.transform.position - this.transform.position).normalized * Random.Range(minPush, maxPush);
-        //        c.attachedRigidbody.AddForce(pushVector);
-        //    }
-        //}
-
         float yPos = this.transform.position.y;
         Vector3 lineDir = new Vector3(1f, 0f, 0f);
         lineDir = this.transform.rotation * lineDir;
@@ -44,10 +32,17 @@ public class WaveNode : MonoBehaviour
         Collider[] hitColliders = Physics.OverlapBox(this.transform.position, new Vector3(waveHalfWidth, yPos, waveHalfExtent), new Quaternion(), layerMask);
         foreach (Collider c in hitColliders)
         {
-            Vector3 collPos = c.transform.position;
-            collPos.y = yPos;
-            Vector3 nearPoint = NearestPointOnLine(this.transform.position, lineDir, collPos);
-            Gizmos.DrawLine(collPos, nearPoint);
+            CrowdMember jumper = c.GetComponent<CrowdMember>();
+            Debug.Assert(jumper != null, "GameObject on CrowdMember layer doesn't have a CrowdMember script");
+
+            if(jumper != null)
+            {
+                //Vector3 collPos = c.transform.position;
+                //collPos.y = yPos;
+                //Vector3 nearPoint = NearestPointOnLine(this.transform.position, lineDir, collPos);
+                //float distanceToOrigin = (nearPoint - collPos).magnitude;
+                jumper.JoinWave(0.3f, 5f, 15000f, 15000f);
+            }
         }
     }
 
