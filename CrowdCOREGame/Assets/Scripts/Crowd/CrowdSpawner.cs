@@ -31,7 +31,6 @@ public class CrowdSpawner : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
 	}
 
     public void SpawnNewCrowd()
@@ -85,29 +84,40 @@ public class CrowdSpawner : MonoBehaviour {
     void PlaceMembers(int membersPerX, int membersPerZ, float xSpacing, float zSpacing)
     {
         int numPlaced = 0;
-        float startPosX = this.transform.position.x - (CrowdSizeX * .5f) + (zSpacing * .5f);
+        Vector3 spawnCenter = this.transform.position;
+        float halfX = CrowdSizeX * .5f;
+        float halfZ = CrowdSizeZ * .5f;
+        float startPosX = spawnCenter.x - halfX + (zSpacing * .5f);
         float currentPosX = startPosX;
-        float currentPosZ = this.transform.position.z - (CrowdSizeZ * .5f) + (zSpacing * .5f);
+        float currentPosZ = spawnCenter.z - halfZ + (zSpacing * .5f);
+
+        float upperBoundsX = spawnCenter.x + halfX;
+        float lowerBoundsX = spawnCenter.x - halfX;
+        float upperBoundsZ = spawnCenter.z + halfZ;
+        float lowerBoundsZ = spawnCenter.z - halfZ;
 
         for (var zIt = 0; zIt < membersPerZ; zIt++ )
         {
             for (var xIt = 0; xIt < membersPerX; xIt++)
             {
-                GameObject firstMember = Instantiate(MemberPrefab, new Vector3(currentPosX, 0.0f, currentPosZ), new Quaternion()) as GameObject;
-                firstMember.transform.parent = this.transform;
-                
+                GameObject newCrowdie = Instantiate(MemberPrefab, new Vector3(currentPosX, 0.0f, currentPosZ), new Quaternion()) as GameObject;
+                newCrowdie.transform.parent = this.transform;
 
                 if (mLookLocations.Count > 0)
                 {
                     int randTargetIndex = Random.Range(0, mLookLocations.Count);
-                    firstMember.transform.LookAt(
+                    newCrowdie.transform.LookAt(
                         new Vector3(mLookLocations[randTargetIndex].position.x,
-                        firstMember.transform.position.y,
+                        newCrowdie.transform.position.y,
                         mLookLocations[randTargetIndex].position.z
                         ));
                 }
 
-                if(CrowdManager.Instance != null) CrowdManager.Instance.AddCrowdie(firstMember.GetComponent<CrowdMember>());
+                CrowdMember newMember = newCrowdie.GetComponent<CrowdMember>();
+                newMember.SetCrowdBounds(spawnCenter, lowerBoundsX, upperBoundsX, lowerBoundsZ, upperBoundsZ);
+
+                // TODO: Do we need this list?
+                //if (CrowdManager.Instance != null) CrowdManager.Instance.AddCrowdie(newMember);
 
                 // Update to new position
                 currentPosX += xSpacing;
