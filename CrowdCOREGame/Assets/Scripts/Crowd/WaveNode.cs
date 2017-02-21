@@ -45,9 +45,9 @@ public class WaveNode : MonoBehaviour
                 float delay = waveSpeed * distanceToOrigin;
 
                 float velocity = VelocityForJump(waveHeight);
-                Debug.Log("VELOCITY FOR JUMP: " + velocity);
-                Debug.Log("TIME FOR JUMP: " + TimeForJump(velocity));
-                jumper.JoinWave(delay, waveDuration, waveHeight, waveHeight);
+                Debug.Log("WaveNode~ Jump Velocity: " + velocity);
+                Debug.Log("WaveNode~ Jump Time: " + TimeForJump(velocity));
+                jumper.JoinWave(delay, waveDuration, velocity, velocity);
             }
         }
     }
