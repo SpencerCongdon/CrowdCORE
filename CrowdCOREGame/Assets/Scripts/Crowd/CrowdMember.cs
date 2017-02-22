@@ -27,8 +27,6 @@ public class CrowdMember : MonoBehaviour
         set { mCurrentInfluence = value; }
     }
 
-    private bool showVel = false;
-
     [SerializeField]
     private CrowdMember mCurrentInfluencer;
 
@@ -117,11 +115,12 @@ public class CrowdMember : MonoBehaviour
 
     void LateUpdate()
     {
-        if (showVel)
-        {
-            Debug.Log("LATEJUMP:" + mRb.velocity.y);
-            showVel = false;
-        }
+
+    }
+
+    private bool IsWaitingToJump()
+    {
+        return IsInvoking(JUMP_FUNCTION) || IsInvoking(TRY_JUMP_FUNCTION);
     }
 
     void FixedUpdate()
@@ -131,7 +130,7 @@ public class CrowdMember : MonoBehaviour
         if (mCurrentInfluence == CrowdEnums.InfluenceType.NewWave)
         {
             // If we are still in the wave and aren't waiting to jump, do it
-            if (IsGrounded() && !IsInvoking(JUMP_FUNCTION)) DoJump();
+            if (IsGrounded() && !IsWaitingToJump()) DoJump();
         }
         else if (!mIsJumpDelayed)
         {
@@ -208,8 +207,6 @@ public class CrowdMember : MonoBehaviour
                 newVel.y = 0;
                 mRb.velocity = newVel;
                 mCurrentJumpState = JumpState.OnGround;
-                Debug.Log("Jump Time: " + jumptime);
-                Debug.Log("Height delta: " + (maxHeight - mRb.position.y));
             }
         }
     }
@@ -219,11 +216,12 @@ public class CrowdMember : MonoBehaviour
     /// </summary>
     public void DoJump()
     {
+        if (IsWaitingToJump()) return;
+
         if (mCurrentJumpState == JumpState.OnGround)
         {
             DetermineCurrentJumpForce();
             mRb.AddForce(GenerateMovementForce(), ForceMode.VelocityChange);
-            showVel = true;
             jumptime = 0f;
             mCurrentJumpState = JumpState.GoingUp;
         }
@@ -299,7 +297,7 @@ public class CrowdMember : MonoBehaviour
             case CrowdEnums.InfluenceType.WaveJump:
                 float xForce = 0;
                 float zForce = 0;
-                // Should this be a different behaviour?
+                // Should this be a separate behaviour?
                 if(!IsInBounds())
                 {
                     Vector3 toCenter = (crowdCenter - this.transform.position).normalized;
@@ -450,12 +448,13 @@ public class CrowdMember : MonoBehaviour
         }
     }
 
-    public void JoinWave(float initialDelay, float waveTime, float jumpMin = -1, float jumpMax = -1)
+    public void JoinWave(float initialDelay, float waveTime, float waveInterval, float jumpMin = -1, float jumpMax = -1)
     {
         mJumpDelay = initialDelay;
         mBehaviourTime = waveTime;
         mOverrideMinJump = jumpMin;
         mOverrideMaxJump = jumpMax;
+        mJumpInterval = waveInterval;
 
         // All of this should probably go in a common function
         // TODO: We're going to need to make sure that other behaviours don't interfere
@@ -466,13 +465,18 @@ public class CrowdMember : MonoBehaviour
 
             mCurrentInfluence = CrowdEnums.InfluenceType.NewWave;
 
+            // initial delay should be offset
+            // so when we divide it by the interval, we get their immediate start time
+
+            initialDelay = initialDelay % mJumpInterval;
+
             if(initialDelay > 0)
             {
-                Invoke(TRY_JUMP_FUNCTION, mJumpDelay);
+                Invoke(TRY_JUMP_FUNCTION, initialDelay);
             }
             else
             {
-                DoJump();
+                TryToJump();
             }
         }
 
@@ -504,4 +508,16 @@ public class CrowdMember : MonoBehaviour
             // I guess we don't get to jump
         }
     }
+
+    //private float VelocityForJump(float desiredHeight)
+    //{
+    //    float g = Physics.gravity.magnitude;
+    //    float initialV = Mathf.Sqrt(desiredHeight * 2 * g);
+    //    return initialV;
+    //}
+    //
+    //private float TimeForJump(float initialVelocity)
+    //{
+    //    return 2 * initialVelocity / Physics.gravity.magnitude;
+    //}
 }

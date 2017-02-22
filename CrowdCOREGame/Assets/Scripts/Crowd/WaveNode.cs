@@ -2,7 +2,8 @@
 
 public class WaveNode : MonoBehaviour
 {
-    public float gizHeight = 3f;
+    private const float OVERLAP_HEIGHT = 2f; // Height we'll be counting jumpers
+
     public float waveHalfWidth;     // The width of the line from which the wave originates
     public float waveHalfExtent;    // How far out from the line the wave will influence
     public float waveJumpForce;     // For controlling how high everyone jumps
@@ -43,18 +44,22 @@ public class WaveNode : MonoBehaviour
                 Vector3 nearPoint = NearestPointOnLine(this.transform.position, lineDir, collPos);
                 float distanceToOrigin = (nearPoint - collPos).magnitude;
                 float delay = waveSpeed * distanceToOrigin;
-
+                
+                // TODO: The crowd member should be calculating these, only pass the jump height
                 float velocity = VelocityForJump(waveHeight);
-                Debug.Log("WaveNode~ Jump Velocity: " + velocity);
-                Debug.Log("WaveNode~ Jump Time: " + TimeForJump(velocity));
-                jumper.JoinWave(delay, waveDuration, velocity, velocity);
+                float interval = TimeForJump(velocity);
+                jumper.JoinWave(delay, waveDuration, interval, velocity, velocity);
             }
         }
     }
 
-    //linePnt - point the line passes through
-    //lineDir - unit vector in direction of line, either direction works
-    //pnt - the point to find nearest on line for
+    /// <summary>
+    /// A function to find the point on a line closest to an external point
+    /// </summary>
+    /// <param name="linePnt">Point the line passes through</param>
+    /// <param name="lineDir">Unit vector in direction of line</param>
+    /// <param name="pnt">The external point</param>
+    /// <returns></returns>
     public Vector3 NearestPointOnLine(Vector3 linePnt, Vector3 lineDir, Vector3 pnt)
     {
         lineDir.Normalize();    //this needs to be a unit vector
@@ -106,7 +111,7 @@ public class WaveNode : MonoBehaviour
         Gizmos.color = Color.yellow;
         Vector3 lineDir = nodeRot * new Vector3(1f, 0f, 0f);
         int layerMask = 1 << 11;
-        Collider[] hitColliders = Physics.OverlapBox(nodePos, new Vector3(waveHalfWidth, yPos, waveHalfExtent), nodeRot, layerMask);
+        Collider[] hitColliders = Physics.OverlapBox(nodePos, new Vector3(waveHalfWidth, OVERLAP_HEIGHT, waveHalfExtent), nodeRot, layerMask);
         foreach (Collider c in hitColliders)
         {
             Vector3 collPos = c.transform.position;
@@ -121,14 +126,14 @@ public class WaveNode : MonoBehaviour
         return rotation * (point - pivot) + pivot;
     }
 
-    public float VelocityForJump(float desiredHeight)
+    private float VelocityForJump(float desiredHeight)
     {
         float g = Physics.gravity.magnitude;
         float initialV = Mathf.Sqrt(desiredHeight * 2 * g);
         return initialV;
     }
 
-    public float TimeForJump(float initialVelocity)
+    private float TimeForJump(float initialVelocity)
     {
         return 2 * initialVelocity / Physics.gravity.magnitude;
     }
