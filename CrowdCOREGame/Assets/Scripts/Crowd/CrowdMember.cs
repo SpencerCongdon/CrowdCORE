@@ -17,11 +17,11 @@ public class CrowdMember : MonoBehaviour
     }
 
     [SerializeField]
-    private CrowdEnums.InfluenceType mDefaultInfluence = CrowdEnums.InfluenceType.Normal;
+    private CrowdEnums.BehaviourType mDefaultInfluence = CrowdEnums.BehaviourType.Normal;
 
     [SerializeField]
-    private CrowdEnums.InfluenceType mCurrentInfluence;
-    public CrowdEnums.InfluenceType CurrentInfluence
+    private CrowdEnums.BehaviourType mCurrentInfluence;
+    public CrowdEnums.BehaviourType CurrentInfluence
     {
         get { return mCurrentInfluence; }
         set { mCurrentInfluence = value; }
@@ -53,12 +53,7 @@ public class CrowdMember : MonoBehaviour
     private Rigidbody mRb;
 
     [SerializeField]
-    private float mInfluenceTime = 3.0f;
-
-    [SerializeField]
-    private float mWaveJumpDelay = 0.2f;
-    private bool mHasJumpDelay = false;
-    private bool mIsJumpDelayed = false;
+    private float mDefaultBehaviourTime;
 
     [SerializeField]
     private float mMoshTimeDelay = 1.0f;
@@ -103,7 +98,8 @@ public class CrowdMember : MonoBehaviour
     float upperBoundX;
     float lowerBoundZ;
     float upperBoundZ;
-    
+
+    #region Monobehaviour Functions
     void Awake()
     {
         Debug.Assert(mMinJumpHeight <= mMaxJumpHeight, "MinJump is bigger than MaxJump - get your shit together");
@@ -123,67 +119,103 @@ public class CrowdMember : MonoBehaviour
 
     void FixedUpdate()
     {
+        CheckForInfluencer();
         UpdateJumpState();
 
-        if (mCurrentInfluence == CrowdEnums.InfluenceType.NewWave)
+        switch(mCurrentInfluence)
         {
-            // If we are still in the wave and aren't waiting to jump, do it
-            if (IsGrounded() && !IsWaitingToJump()) DoJump();
-        }
-        else if (!mIsJumpDelayed)
-        {
-            switch(mCurrentInfluence)
-            {
-                // Jump if we are on the ground
-                case CrowdEnums.InfluenceType.Normal:
-                case CrowdEnums.InfluenceType.Influencer:
-                    if (IsGrounded())
-                    {
-                        DoJump();
-                    }
-                    break;
+            // Jump if we are on the ground
+            case CrowdEnums.BehaviourType.Normal:
+            case CrowdEnums.BehaviourType.Influencer:
+            case CrowdEnums.BehaviourType.NewWave:
+                TryToJump();
+                break;
 
-                // Jump if our influencer will be jumping too
-                case CrowdEnums.InfluenceType.JumpTogether:
-                    if (IsGrounded() && mCurrentInfluencer.IsGrounded())
-                    {
-                        DoJump();
-                    }
-                    break;
+            // Jump if our influencer will be jumping too
+            case CrowdEnums.BehaviourType.JumpTogether:
+                if (mCurrentInfluencer.IsGrounded())
+                {
+                    TryToJump();
+                }
+                break;
 
-                // Jump if our influencer is on his way down
-                case CrowdEnums.InfluenceType.WaveJump:
-                    if (IsGrounded() && mCurrentInfluencer.IsFalling())
-                    {
-                        DoJump();
-                    }
-                    break;
-
-                // TODO: change behaviours that have timers to use the same one
-                case CrowdEnums.InfluenceType.Mosh:
-                    if (mMoshTimer <= 0.0f)
-                    {
-                        mMoshTimer = mMoshTimeDelay;
-                        DoJump();
-                    }
-                    mMoshTimer -= Time.fixedDeltaTime;
-                    break;
-                case CrowdEnums.InfluenceType.SurgeForward:
-                    if (mSurgeTimer <= 0.0f)
-                    {
-                        mSurgeTimer = mSurgeTimeDelay;
-                        DoJump();
-                    }
-                    mSurgeTimer -= Time.fixedDeltaTime;
-                    break;
-                default:
-                    // Do nothing
-                    break;
-            }
+            // TODO: change behaviours that have timers to use the same one
+            case CrowdEnums.BehaviourType.Mosh:
+                if (mMoshTimer <= 0.0f)
+                {
+                    mMoshTimer = mMoshTimeDelay;
+                    TryToJump();
+                }
+                mMoshTimer -= Time.fixedDeltaTime;
+                break;
+            case CrowdEnums.BehaviourType.SurgeForward:
+                if (mSurgeTimer <= 0.0f)
+                {
+                    mSurgeTimer = mSurgeTimeDelay;
+                    TryToJump();
+                }
+                mSurgeTimer -= Time.fixedDeltaTime;
+                break;
+            default:
+                // Do nothing
+                break;
         }
     }
+    #endregion // Monobehaviour Functions
 
-    public void UpdateJumpState()
+    #region Public Functions
+    /// <summary>
+    /// Whether or not the CrowdMember is standing on the ground, ready to jump.
+    /// </summary>
+    /// <returns>True if on the ground</returns>
+    public bool IsGrounded()
+    {
+        return mCurrentJumpState == JumpState.OnGround;
+    }
+
+    /// <summary>
+    /// Whether or not the CrowdMember is on the downward portion of their jump.
+    /// </summary>
+    /// <returns>True if coming down</returns>
+    public bool IsFalling()
+    {
+        return mCurrentJumpState == JumpState.ComingDown;
+    }
+
+    /// <summary>
+    /// Check if this crowd member is within the area it was spawned.
+    /// </summary>
+    /// <returns>True if inside spawn area</returns>
+    public bool IsInBounds()
+    {
+        bool inX = transform.position.x <= upperBoundX && transform.position.x >= lowerBoundX;
+        bool inZ = transform.position.z <= upperBoundZ && transform.position.z >= lowerBoundZ;
+        return inX && inZ;
+    }
+
+    /// <summary>
+    /// Set the boundaries of the crowd spawn area this member is a part of.
+    /// </summary>
+    /// <param name="center"></param>
+    /// <param name="lowerX"></param>
+    /// <param name="upperX"></param>
+    /// <param name="lowerZ"></param>
+    /// <param name="upperZ"></param>
+    public void SetCrowdBounds(Vector3 center, float lowerX, float upperX, float lowerZ, float upperZ)
+    {
+        crowdCenter = center;
+        lowerBoundX = lowerX;
+        upperBoundX = upperX;
+        lowerBoundZ = lowerZ;
+        upperBoundZ = upperZ;
+    }
+    #endregion // Public Functions
+
+    #region Jump Functions
+    /// <summary>
+    /// Update the state of our jump.
+    /// </summary>
+    private void UpdateJumpState()
     {
         if (mCurrentJumpState == JumpState.GoingUp)
         {
@@ -240,12 +272,6 @@ public class CrowdMember : MonoBehaviour
         DetermineCurrentJumpVelocity();
         mRb.AddForce(GenerateMovementVelocity(), ForceMode.VelocityChange);
         mCurrentJumpState = JumpState.GoingUp;
-
-        // TODO: I'm not sure the jump function should be determining delays
-        if (mHasJumpDelay)
-        {
-            StartCoroutine(WaveJumpDelay());
-        }
     }
 
     /// <summary>
@@ -265,27 +291,26 @@ public class CrowdMember : MonoBehaviour
         switch (mCurrentInfluence)
         {
             // The random jump cases
-            case CrowdEnums.InfluenceType.Normal:
-            case CrowdEnums.InfluenceType.NewWave:
+            case CrowdEnums.BehaviourType.Normal:
+            case CrowdEnums.BehaviourType.NewWave:
                 float min = mOverrideMinJump >= 0 ? mOverrideMinJump : mMinJumpHeight;
                 float max = mOverrideMaxJump >= 0 ? mOverrideMaxJump : mMaxJumpHeight;
                 mCurrentJumpHeight = Random.Range(min, max);
                 break;
 
             // The cases where we take the influencer's jump force
-            case CrowdEnums.InfluenceType.JumpTogether:
-            case CrowdEnums.InfluenceType.WaveJump:
+            case CrowdEnums.BehaviourType.JumpTogether:
                 mCurrentJumpHeight = mCurrentInfluencer.CurrentJumpHeight;
                 break;
 
             // Cases with special values
-            case CrowdEnums.InfluenceType.SurgeForward:
+            case CrowdEnums.BehaviourType.SurgeForward:
                 mCurrentJumpHeight = mSurgeJumpForce;
                 break;
 
             // Other special cases where characters may not be jumping
-            case CrowdEnums.InfluenceType.Mosh:
-            case CrowdEnums.InfluenceType.None:
+            case CrowdEnums.BehaviourType.Mosh:
+            case CrowdEnums.BehaviourType.None:
                 mCurrentJumpHeight = 0;
                 break;
 
@@ -310,14 +335,13 @@ public class CrowdMember : MonoBehaviour
         switch(mCurrentInfluence)
         {
             // The cases where we jump straight up and down
-            case CrowdEnums.InfluenceType.NewWave:
+            case CrowdEnums.BehaviourType.NewWave:
                 returnVelocity.y = mCurrentJumpVelocity;
                 break;
 
             // The cases where crowd members drift around
-            case CrowdEnums.InfluenceType.Normal:
-            case CrowdEnums.InfluenceType.JumpTogether:
-            case CrowdEnums.InfluenceType.WaveJump:
+            case CrowdEnums.BehaviourType.Normal:
+            case CrowdEnums.BehaviourType.JumpTogether:
                 float xForce = 0;
                 float zForce = 0;
                 // Should this be a separate behaviour?
@@ -340,20 +364,20 @@ public class CrowdMember : MonoBehaviour
                 break;
 
             // While moshing we move towards a chosen point
-            case CrowdEnums.InfluenceType.Mosh:
+            case CrowdEnums.BehaviourType.Mosh:
                 Vector3 dirToTarget = mCurrentInfluencer.transform.position - transform.position;
                 dirToTarget.Normalize();
                 returnVelocity = dirToTarget * mMoshVelocity;
                 break;
 
             // While surging we move together in one direction
-            case CrowdEnums.InfluenceType.SurgeForward:
+            case CrowdEnums.BehaviourType.SurgeForward:
                 // TODO: We should be surging in a specific direction, not just along the Z axis
                 returnVelocity = new Vector3(0.0f, mCurrentJumpVelocity, -1.0f * mSurgeVelocity);
                 break;
 
             // For cases where we don't have any non-jump modifiers
-            case CrowdEnums.InfluenceType.None:
+            case CrowdEnums.BehaviourType.None:
             default:
                 // We don't modify the empty vector
                 break;
@@ -361,77 +385,29 @@ public class CrowdMember : MonoBehaviour
 
         return returnVelocity;
     }
+    #endregion // Jump Functions
 
-    public bool IsGrounded()
+    #region Behaviour and Influence
+    /// <summary>
+    /// Designate this CrowdMember as an influencer and begin influencing other crowd members.
+    /// </summary>
+    /// <param name="newData">Information about the new influence</param>
+    public void StartInfluence(CrowdInfluenceData newData)
     {
-        return mCurrentJumpState == JumpState.OnGround;
-    }
-
-    public bool IsFalling()
-    {
-        return mCurrentJumpState == JumpState.ComingDown;
+        mCurrentInfluence = CrowdEnums.BehaviourType.Influencer;
+        ApplyInfluence(newData);
+        Invoke(RESET_FUNCTION, newData.Duration);
     }
 
     /// <summary>
-    /// Check if this crowd member is within the area it was spawned.
+    /// Applys an influence to surrounding crowdmembers.
     /// </summary>
-    /// <returns>True if inside spawn area</returns>
-    public bool IsInBounds()
-    {
-        bool inX = transform.position.x <= upperBoundX && transform.position.x >= lowerBoundX;
-        bool inZ = transform.position.z <= upperBoundZ && transform.position.z >= lowerBoundZ;
-        return inX && inZ;
-    }
-
-    /// <summary>
-    /// Set the boundaries of the crowd spawn area this member is a part of.
-    /// </summary>
-    /// <param name="center"></param>
-    /// <param name="lowerX"></param>
-    /// <param name="upperX"></param>
-    /// <param name="lowerZ"></param>
-    /// <param name="upperZ"></param>
-    public void SetCrowdBounds(Vector3 center, float lowerX, float upperX, float lowerZ, float upperZ)
-    {
-        crowdCenter = center;
-        lowerBoundX = lowerX;
-        upperBoundX = upperX;
-        lowerBoundZ = lowerZ;
-        upperBoundZ = upperZ;
-    }
-
-    private IEnumerator ClearInfluence()
-    {
-        yield return new WaitForSeconds(mInfluenceTime);
-        mCurrentInfluencer = null;
-        mCurrentInfluence = CrowdEnums.InfluenceType.Normal;
-        mHasJumpDelay = false;
-    }
-
-    private IEnumerator WaveJumpDelay()
-    {
-        mIsJumpDelayed = true;
-        yield return new WaitForSeconds(mWaveJumpDelay);
-        mIsJumpDelayed = false;
-    }
-
-    public void StartInfluence(CrowdEnums.InfluenceType influenceType, CrowdMember influencer, int count)
-    {
-        CrowdInfluenceData data = new CrowdInfluenceData(influenceType, influencer, count);
-        mCurrentInfluence = CrowdEnums.InfluenceType.Influencer;
-        if(mCurrentInfluence == CrowdEnums.InfluenceType.WaveJump)
-        {
-            mHasJumpDelay = true;
-        }
-        ApplyInfluence(data);
-        StartCoroutine(ClearInfluence());
-    }
-    // Applys an influence to surrounding crowdmembers.
+    /// <param name="data">Information about the influence</param>
     public void ApplyInfluence(CrowdInfluenceData data)
     {
         LayerMask mask = 1 << LayerMask.NameToLayer("CrowdMember");
         Collider[] crowdMembers = Physics.OverlapSphere(this.transform.position, mInfluenceRadius, mask);
-        if(data.Count > 0)
+        if (data.Count > 0)
         {
             for (int i = 0; i < crowdMembers.Length; i++)
             {
@@ -441,7 +417,7 @@ public class CrowdMember : MonoBehaviour
                     if (crowdie != null)
                     {
                         // Only influence those who are not influenced.
-                        if (crowdie.CurrentInfluence == CrowdEnums.InfluenceType.Normal)
+                        if (crowdie.CurrentInfluence == CrowdEnums.BehaviourType.Normal)
                         {
                             data.Count--;
                             crowdie.OnInfluenced(data);
@@ -452,35 +428,37 @@ public class CrowdMember : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// This CrowdMember has been influenced by another.
+    /// </summary>
+    /// <param name="data">Information about the influence</param>
     public void OnInfluenced(CrowdInfluenceData data)
     {
-        if (mCurrentInfluence == CrowdEnums.InfluenceType.Normal)
-        {   
+        if (mCurrentInfluence == CrowdEnums.BehaviourType.Normal)
+        {
+            Debug.Assert(data.Influencer != null, "Influenced by noone?");
+            if (data.Influencer == null) return;
+
             // Store the influence
             mCurrentInfluencer = data.Influencer;
             mCurrentInfluence = data.Influence;
 
             switch (data.Influence)
             {
-                case CrowdEnums.InfluenceType.JumpTogether:
+                case CrowdEnums.BehaviourType.JumpTogether:
                     ApplyInfluence(data);
                     break;
-                case CrowdEnums.InfluenceType.WaveJump:
-                    mHasJumpDelay = true;
-                    data.Influencer = this;
-                    ApplyInfluence(data);
-                    break;
-                case CrowdEnums.InfluenceType.Mosh:
+                case CrowdEnums.BehaviourType.Mosh:
                     mMoshTimer = 0.0f;
                     break;
-                case CrowdEnums.InfluenceType.SurgeForward:
+                case CrowdEnums.BehaviourType.SurgeForward:
                     ApplyInfluence(data);
                     break;
                 default:
                     break;
             }
 
-            StartCoroutine(ClearInfluence());
+            Invoke(RESET_FUNCTION, data.Duration);
         }
     }
 
@@ -510,7 +488,7 @@ public class CrowdMember : MonoBehaviour
         float velocity = CalculateJumpVelocity(averageJump);
         mJumpInterval = CalculateJumpDuration(velocity);
 
-        if(!imposeDelay)
+        if (!imposeDelay)
         {
             // If we don't want everyone to wait for the wave, we can have them jump in time with the wave
             // by dividing the delay by the interval, so we get their immediate start time
@@ -518,7 +496,7 @@ public class CrowdMember : MonoBehaviour
         }
 
         // Everything is ready, but before we try to jump, set the active behaviour
-        mCurrentInfluence = CrowdEnums.InfluenceType.NewWave;
+        mCurrentInfluence = CrowdEnums.BehaviourType.NewWave;
 
         if (initialDelay > 0)
         {
@@ -530,7 +508,28 @@ public class CrowdMember : MonoBehaviour
         }
 
         // Make sure to end the behaviour after the provided period of time
-        Invoke(RESET_FUNCTION, waveTime);
+        Invoke(RESET_FUNCTION, mBehaviourTime);
+    }
+
+    /// <summary>
+    /// Check to make sure that while being influenced, we haven't lost our influencer.
+    /// </summary>
+    private void CheckForInfluencer()
+    {
+        switch(mCurrentInfluence)
+        {
+            case CrowdEnums.BehaviourType.JumpTogether:
+            case CrowdEnums.BehaviourType.Mosh:
+                if(mCurrentInfluencer == null)
+                {
+                    Debug.LogError("Crowd member lost influencer while being influenced - Clearing");
+                    ResetBehaviour();
+                }
+                break;
+            default:
+                // Carry on
+                break;
+        }
     }
 
     /// <summary>
@@ -538,7 +537,6 @@ public class CrowdMember : MonoBehaviour
     /// </summary>
     private void ResetBehaviour()
     {
-        StopAllCoroutines();
         if (IsInvoking(TRY_JUMP_FUNCTION)) CancelInvoke(TRY_JUMP_FUNCTION);
 
         mJumpDelay = -1;
@@ -546,9 +544,12 @@ public class CrowdMember : MonoBehaviour
         mBehaviourTime = -1;
         mOverrideMinJump = -1;
         mOverrideMaxJump = -1;
+        mCurrentInfluencer = null;
         mCurrentInfluence = mDefaultInfluence;
     }
+    #endregion // Behaviour and Influence
 
+    #region Calculation Helpers
     /// <summary>
     /// Calculate the necessary initial velocity required to jump to a certain height
     /// </summary>
@@ -570,4 +571,5 @@ public class CrowdMember : MonoBehaviour
     {
         return 2 * initialVelocity / Physics.gravity.magnitude;
     }
+    #endregion // Calculation Helpers
 }

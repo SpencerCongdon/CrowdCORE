@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class CrowdEnums
 {
-    public enum InfluenceType
+    public enum BehaviourType
     {
         None = -1,      // Crowd member is not going to jump
-        Normal,         // We are just jumping
+        Normal,         // We are just jumping randomly
         Influencer,
-        WaveJump,
         NewWave,
         JumpTogether,
         Mosh,

@@ -19,7 +19,7 @@ public class WaveNode : MonoBehaviour
         float yPos = this.transform.position.y;
         Vector3 lineDir = Vector3.right;
         lineDir = this.transform.rotation * lineDir;
-        int layerMask = 1 << 11; // Only hit Crowd Members
+        int layerMask = 1 << LayerMask.NameToLayer("CrowdMember");
 
         Collider[] hitColliders = Physics.OverlapBox(this.transform.position, new Vector3(waveHalfWidth, OVERLAP_HEIGHT, waveHalfExtent), this.transform.rotation, layerMask);
         foreach (Collider c in hitColliders)
