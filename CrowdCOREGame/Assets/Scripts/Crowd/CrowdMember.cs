@@ -37,10 +37,10 @@ public class CrowdMember : MonoBehaviour
     private float mInfluenceRadius = 0.5f; // <! Tunable
 
     [SerializeField]
-    private float mMaxJumpForce = 60f;
+    private float mMaxJumpHeight;
 
     [SerializeField]
-    private float mMinJumpForce = 100f;
+    private float mMinJumpHeight;
 
     // To be set by non-normal jump behaviours
     private float mOverrideMinJump = -1f;
@@ -69,19 +69,22 @@ public class CrowdMember : MonoBehaviour
     private Transform mFoot;
 
     [SerializeField]
-    private float mCurrentJumpForce = 0.0f;
-    public float CurrentJumpForce
+    private float mCurrentJumpVelocity = 0.0f;
+
+    [SerializeField]
+    private float mCurrentJumpHeight;
+    public float CurrentJumpHeight
     {
-        get { return mCurrentJumpForce; }
+        get { return mCurrentJumpHeight; }
     }
 
     // Moshing
     [SerializeField]
-    private float mMoshForce = 40000.0f;
+    private float mMoshVelocity = 40000.0f;
 
     // Surging
     [SerializeField]
-    private float mSurgeForce = 20000.0f;
+    private float mSurgeVelocity = 20000.0f;
     [SerializeField]
     private float mSurgeJumpForce = 11000.0f;
 
@@ -93,10 +96,8 @@ public class CrowdMember : MonoBehaviour
     private float mSurgeTimer = 0.0f;
 
 
-    private float jumptime = 0f;
-    private float maxHeight = 0f;
-
     // Crowd boundaries
+    // TODO: Would be nice to have a better boundary definition
     Vector3 crowdCenter;
     float lowerBoundX;
     float upperBoundX;
@@ -105,6 +106,8 @@ public class CrowdMember : MonoBehaviour
     
     void Awake()
     {
+        Debug.Assert(mMinJumpHeight <= mMaxJumpHeight, "MinJump is bigger than MaxJump - get your shit together");
+
         mCurrentInfluence = mDefaultInfluence;
         mRb = GetComponent<Rigidbody>();
     }
@@ -116,11 +119,6 @@ public class CrowdMember : MonoBehaviour
     void LateUpdate()
     {
 
-    }
-
-    private bool IsWaitingToJump()
-    {
-        return IsInvoking(JUMP_FUNCTION) || IsInvoking(TRY_JUMP_FUNCTION);
     }
 
     void FixedUpdate()
@@ -189,17 +187,14 @@ public class CrowdMember : MonoBehaviour
     {
         if (mCurrentJumpState == JumpState.GoingUp)
         {
-            jumptime += Time.deltaTime;
             // As soon as they reach the top, they are coming down
             if (mRb.velocity.y <= 0f)
             {
-                maxHeight = mRb.position.y;
                 mCurrentJumpState = JumpState.ComingDown;
             }
         }
         else if (mCurrentJumpState == JumpState.ComingDown)
         {
-            jumptime += Time.deltaTime;
             // Calculate if we've landed
             if (Physics.Raycast(mFoot.position, -1.0f * mFoot.up, 0.1f))
             {
@@ -212,23 +207,39 @@ public class CrowdMember : MonoBehaviour
     }
 
     /// <summary>
+    /// Function that guards handles all logic about whether or not we are allowed to jump
+    /// </summary>
+    private void TryToJump()
+    {
+        // If we are waiting to jump, continue to wait
+        if (!IsWaitingToJump())
+        {
+            // If we are grounded jump now
+            if (IsGrounded())
+            {
+                DoJump();
+            }
+            // If we are still in the air, any only jump on intervals, schedule next jump
+            else if (mJumpInterval > 0)
+            {
+                Invoke(TRY_JUMP_FUNCTION, mJumpInterval);
+            }
+        }
+    }
+
+    /// <summary>
     /// The main function that performs a new jump based on all current variables
     /// </summary>
-    public void DoJump()
+    /// <remarks>
+    /// DO NOT call this directly. Instead, call TryToJump so that we aren't jumping when we shouldn't be
+    /// </remarks>
+    private void DoJump()
     {
-        if (IsWaitingToJump()) return;
+        Debug.Assert(!IsWaitingToJump(), "Should not be calling DoJump while we are waiting!");
 
-        if (mCurrentJumpState == JumpState.OnGround)
-        {
-            DetermineCurrentJumpForce();
-            mRb.AddForce(GenerateMovementForce(), ForceMode.VelocityChange);
-            jumptime = 0f;
-            mCurrentJumpState = JumpState.GoingUp;
-        }
-        else
-        {
-            Debug.LogWarning("Should not be calling DoJump when a crowd member isn't on the ground");
-        }
+        DetermineCurrentJumpVelocity();
+        mRb.AddForce(GenerateMovementVelocity(), ForceMode.VelocityChange);
+        mCurrentJumpState = JumpState.GoingUp;
 
         // TODO: I'm not sure the jump function should be determining delays
         if (mHasJumpDelay)
@@ -238,57 +249,69 @@ public class CrowdMember : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates mCurrentJumpForce using the current crowd member information
+    /// Determines if we are waiting for our next jump
     /// </summary>
-    private void DetermineCurrentJumpForce()
+    /// <returns>True if we are waiting</returns>
+    private bool IsWaitingToJump()
+    {
+        return IsInvoking(TRY_JUMP_FUNCTION);
+    }
+
+    /// <summary>
+    /// Updates mCurrentJumpVelocity using the current crowd member information.
+    /// </summary>
+    private void DetermineCurrentJumpVelocity()
     {
         switch (mCurrentInfluence)
         {
             // The random jump cases
             case CrowdEnums.InfluenceType.Normal:
             case CrowdEnums.InfluenceType.NewWave:
-                float min = mOverrideMinJump >= 0 ? mOverrideMinJump : mMinJumpForce;
-                float max = mOverrideMaxJump >= 0 ? mOverrideMaxJump : mMaxJumpForce;
-                mCurrentJumpForce = Random.Range(min, max);
+                float min = mOverrideMinJump >= 0 ? mOverrideMinJump : mMinJumpHeight;
+                float max = mOverrideMaxJump >= 0 ? mOverrideMaxJump : mMaxJumpHeight;
+                mCurrentJumpHeight = Random.Range(min, max);
                 break;
 
             // The cases where we take the influencer's jump force
             case CrowdEnums.InfluenceType.JumpTogether:
             case CrowdEnums.InfluenceType.WaveJump:
-                mCurrentJumpForce = mCurrentInfluencer.CurrentJumpForce;
+                mCurrentJumpHeight = mCurrentInfluencer.CurrentJumpHeight;
                 break;
 
             // Cases with special values
             case CrowdEnums.InfluenceType.SurgeForward:
-                mCurrentJumpForce = mSurgeJumpForce;
+                mCurrentJumpHeight = mSurgeJumpForce;
                 break;
 
             // Other special cases where characters may not be jumping
             case CrowdEnums.InfluenceType.Mosh:
             case CrowdEnums.InfluenceType.None:
-                mCurrentJumpForce = 0;
+                mCurrentJumpHeight = 0;
                 break;
 
             default:
                 // Otherwise, don't update the jump force
                 break;
         }
+
+        mCurrentJumpVelocity = CalculateJumpVelocity(mCurrentJumpHeight);
     }
 
     /// <summary>
-    /// Generate a force vector to apply to the crowd member at this moment
+    /// Generate a velocity vector to apply to the crowd member at this moment. All movement logic 
+    /// that is NOT jumping, should be performed in here.
     /// </summary>
     /// <returns>The force to be applied</returns>
-    private Vector3 GenerateMovementForce()
+    private Vector3 GenerateMovementVelocity()
     {
-        Vector3 returnForce = new Vector3();
+        Vector3 returnVelocity = new Vector3();
 
         // We currently just switch on the influence type, but there could be other options
         switch(mCurrentInfluence)
         {
             // The cases where we jump straight up and down
             case CrowdEnums.InfluenceType.NewWave:
-                returnForce.y = CurrentJumpForce;
+                returnVelocity.y = mCurrentJumpVelocity;
                 break;
 
             // The cases where crowd members drift around
@@ -300,6 +323,7 @@ public class CrowdMember : MonoBehaviour
                 // Should this be a separate behaviour?
                 if(!IsInBounds())
                 {
+                    // Move back into the spawn area
                     Vector3 toCenter = (crowdCenter - this.transform.position).normalized;
                     xForce = toCenter.x * mMaxHorizontalForce;
                     zForce = toCenter.z * mMaxHorizontalForce;
@@ -310,22 +334,22 @@ public class CrowdMember : MonoBehaviour
                     zForce = Random.Range(-mMaxHorizontalForce, mMaxHorizontalForce);
                 }
 
-                returnForce.x = xForce * mCurrentJumpForce;
-                returnForce.y = mCurrentJumpForce;
-                returnForce.z = zForce * mCurrentJumpForce;
+                returnVelocity.x = xForce;
+                returnVelocity.y = mCurrentJumpVelocity;
+                returnVelocity.z = zForce;
                 break;
 
             // While moshing we move towards a chosen point
             case CrowdEnums.InfluenceType.Mosh:
                 Vector3 dirToTarget = mCurrentInfluencer.transform.position - transform.position;
                 dirToTarget.Normalize();
-                returnForce = dirToTarget * mMoshForce;
+                returnVelocity = dirToTarget * mMoshVelocity;
                 break;
 
             // While surging we move together in one direction
             case CrowdEnums.InfluenceType.SurgeForward:
                 // TODO: We should be surging in a specific direction, not just along the Z axis
-                returnForce = new Vector3(0.0f, mCurrentJumpForce, -1.0f * mSurgeForce);
+                returnVelocity = new Vector3(0.0f, mCurrentJumpVelocity, -1.0f * mSurgeVelocity);
                 break;
 
             // For cases where we don't have any non-jump modifiers
@@ -335,7 +359,7 @@ public class CrowdMember : MonoBehaviour
                 break;
         }
 
-        return returnForce;
+        return returnVelocity;
     }
 
     public bool IsGrounded()
@@ -348,6 +372,10 @@ public class CrowdMember : MonoBehaviour
         return mCurrentJumpState == JumpState.ComingDown;
     }
 
+    /// <summary>
+    /// Check if this crowd member is within the area it was spawned.
+    /// </summary>
+    /// <returns>True if inside spawn area</returns>
     public bool IsInBounds()
     {
         bool inX = transform.position.x <= upperBoundX && transform.position.x >= lowerBoundX;
@@ -355,6 +383,14 @@ public class CrowdMember : MonoBehaviour
         return inX && inZ;
     }
 
+    /// <summary>
+    /// Set the boundaries of the crowd spawn area this member is a part of.
+    /// </summary>
+    /// <param name="center"></param>
+    /// <param name="lowerX"></param>
+    /// <param name="upperX"></param>
+    /// <param name="lowerZ"></param>
+    /// <param name="upperZ"></param>
     public void SetCrowdBounds(Vector3 center, float lowerX, float upperX, float lowerZ, float upperZ)
     {
         crowdCenter = center;
@@ -448,76 +484,90 @@ public class CrowdMember : MonoBehaviour
         }
     }
 
-    public void JoinWave(float initialDelay, float waveTime, float waveInterval, float jumpMin = -1, float jumpMax = -1)
+    /// <summary>
+    /// Alters the crowd member's behaviour to conform with a crowd wave.
+    /// </summary>
+    /// <param name="initialDelay">Time the member is from the origin of the wave</param>
+    /// <param name="waveTime">Duration of the wave behaviour</param>
+    /// <param name="jumpMin">Minimum jump height</param>
+    /// <param name="jumpMax">Maximum jump height</param>
+    /// <param name="imposeDelay">Forces the member to wait for the wave to get to them before jumping</param>
+    public void JoinWave(float initialDelay, float waveTime, float jumpMax, float jumpMin = -1, bool imposeDelay = false)
     {
+        // Erase all old behaviour stuff
+        ResetBehaviour();
+
+        // Set new values
         mJumpDelay = initialDelay;
         mBehaviourTime = waveTime;
-        mOverrideMinJump = jumpMin;
         mOverrideMaxJump = jumpMax;
-        mJumpInterval = waveInterval;
 
-        // All of this should probably go in a common function
-        // TODO: We're going to need to make sure that other behaviours don't interfere
-        if(mCurrentInfluence == CrowdEnums.InfluenceType.None || mCurrentInfluence == CrowdEnums.InfluenceType.Normal)
+        // If we weren't provided with a minimum, all jumps are the same height
+        mOverrideMinJump = jumpMin != -1 ? jumpMin : jumpMax;
+
+        // The member could jump anywhere within the given range, shoot for the average for the interval
+        float averageJump = (mOverrideMaxJump + mOverrideMinJump) * .5f;
+        float velocity = CalculateJumpVelocity(averageJump);
+        mJumpInterval = CalculateJumpDuration(velocity);
+
+        if(!imposeDelay)
         {
-            StopAllCoroutines();
-            if (IsInvoking(JUMP_FUNCTION)) CancelInvoke(JUMP_FUNCTION);
-
-            mCurrentInfluence = CrowdEnums.InfluenceType.NewWave;
-
-            // initial delay should be offset
-            // so when we divide it by the interval, we get their immediate start time
-
+            // If we don't want everyone to wait for the wave, we can have them jump in time with the wave
+            // by dividing the delay by the interval, so we get their immediate start time
             initialDelay = initialDelay % mJumpInterval;
-
-            if(initialDelay > 0)
-            {
-                Invoke(TRY_JUMP_FUNCTION, initialDelay);
-            }
-            else
-            {
-                TryToJump();
-            }
         }
 
+        // Everything is ready, but before we try to jump, set the active behaviour
+        mCurrentInfluence = CrowdEnums.InfluenceType.NewWave;
+
+        if (initialDelay > 0)
+        {
+            Invoke(TRY_JUMP_FUNCTION, initialDelay);
+        }
+        else
+        {
+            TryToJump();
+        }
+
+        // Make sure to end the behaviour after the provided period of time
         Invoke(RESET_FUNCTION, waveTime);
     }
 
+    /// <summary>
+    /// Reset all information having to do with any currently active behaviours.
+    /// </summary>
     private void ResetBehaviour()
     {
+        StopAllCoroutines();
+        if (IsInvoking(TRY_JUMP_FUNCTION)) CancelInvoke(TRY_JUMP_FUNCTION);
+
         mJumpDelay = -1;
         mJumpInterval = -1;
         mBehaviourTime = -1;
         mOverrideMinJump = -1;
         mOverrideMaxJump = -1;
-        mCurrentInfluence = mDefaultInfluence; // TODO: return to normal
+        mCurrentInfluence = mDefaultInfluence;
     }
 
-    private void TryToJump()
+    /// <summary>
+    /// Calculate the necessary initial velocity required to jump to a certain height
+    /// </summary>
+    /// <param name="desiredHeight">The heigh we want to achieve</param>
+    /// <returns>Initial veloctiy required for jump</returns>
+    private float CalculateJumpVelocity(float desiredHeight)
     {
-        if(IsGrounded())
-        {
-            DoJump();
-        }
-        else if(mJumpInterval > 0)
-        {
-            Invoke(TRY_JUMP_FUNCTION, mJumpInterval);
-        }
-        else
-        {
-            // I guess we don't get to jump
-        }
+        float g = Physics.gravity.magnitude;
+        float initialV = Mathf.Sqrt(desiredHeight * 2 * g);
+        return initialV;
     }
-
-    //private float VelocityForJump(float desiredHeight)
-    //{
-    //    float g = Physics.gravity.magnitude;
-    //    float initialV = Mathf.Sqrt(desiredHeight * 2 * g);
-    //    return initialV;
-    //}
-    //
-    //private float TimeForJump(float initialVelocity)
-    //{
-    //    return 2 * initialVelocity / Physics.gravity.magnitude;
-    //}
+    
+    /// <summary>
+    /// Time to complete a jump given an initial velocity
+    /// </summary>
+    /// <param name="initialVelocity">The initial vertical velocity</param>
+    /// <returns>Jump duration in seconds</returns>
+    private float CalculateJumpDuration(float initialVelocity)
+    {
+        return 2 * initialVelocity / Physics.gravity.magnitude;
+    }
 }

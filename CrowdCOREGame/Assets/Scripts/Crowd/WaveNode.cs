@@ -6,32 +6,22 @@ public class WaveNode : MonoBehaviour
 
     public float waveHalfWidth;     // The width of the line from which the wave originates
     public float waveHalfExtent;    // How far out from the line the wave will influence
-    public float waveJumpForce;     // For controlling how high everyone jumps
-    public float waveHeight;        // Height we want people to jump
-    public float waveJumpVariation; // Factor by which jumps will vary
+    public float minHeight;         // Height we want people to jump
+    public float maxHeight;         // Factor by which jumps will vary
     public float waveDuration;      // Time that the wave is active
     public float waveSpeed;         // Modifies how fast the jump propegates through the crowd
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    /// <summary>
+    /// Initiate a wave at the current location
+    /// </summary>
     public void StartWave()
     {
         float yPos = this.transform.position.y;
-        Vector3 lineDir = new Vector3(1f, 0f, 0f);
+        Vector3 lineDir = Vector3.right;
         lineDir = this.transform.rotation * lineDir;
-        int layerMask = 1 << 11;
+        int layerMask = 1 << 11; // Only hit Crowd Members
 
-        Collider[] hitColliders = Physics.OverlapBox(this.transform.position, new Vector3(waveHalfWidth, yPos, waveHalfExtent), this.transform.rotation, layerMask);
+        Collider[] hitColliders = Physics.OverlapBox(this.transform.position, new Vector3(waveHalfWidth, OVERLAP_HEIGHT, waveHalfExtent), this.transform.rotation, layerMask);
         foreach (Collider c in hitColliders)
         {
             CrowdMember jumper = c.GetComponent<CrowdMember>();
@@ -46,9 +36,9 @@ public class WaveNode : MonoBehaviour
                 float delay = waveSpeed * distanceToOrigin;
                 
                 // TODO: The crowd member should be calculating these, only pass the jump height
-                float velocity = VelocityForJump(waveHeight);
-                float interval = TimeForJump(velocity);
-                jumper.JoinWave(delay, waveDuration, interval, velocity, velocity);
+                //float velocity = VelocityForJump(minHeight);
+                //float interval = TimeForJump(velocity);
+                jumper.JoinWave(delay, waveDuration, minHeight, maxHeight);
             }
         }
     }
@@ -88,7 +78,6 @@ public class WaveNode : MonoBehaviour
 
         // Draw the box for the wave area
         Gizmos.color = Color.blue;
-        Quaternion rotation = nodeRot;
 
         // The corner locations
         Vector3 cor1 = new Vector3(waveHalfWidth + xPos,  yPos, waveHalfExtent + zPos);
@@ -121,7 +110,14 @@ public class WaveNode : MonoBehaviour
         }
     }
 
-    public Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Quaternion rotation)
+    /// <summary>
+    /// For rotating gizmo points
+    /// </summary>
+    /// <param name="point">Point to rotate</param>
+    /// <param name="pivot">Point to rotate around</param>
+    /// <param name="rotation">The rotation to perform</param>
+    /// <returns>The rotated point</returns>
+    private Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Quaternion rotation)
     {
         return rotation * (point - pivot) + pivot;
     }
