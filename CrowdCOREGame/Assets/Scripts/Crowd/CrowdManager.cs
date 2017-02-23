@@ -26,7 +26,7 @@ public class CrowdManager : Singleton<CrowdManager>
     private int mMaxInfluencers = 4;
 
     [SerializeField]
-    private int mInfluenceDuration = 5f;
+    private float mInfluenceDuration = 5f;
 
     public override void Awake()
     {

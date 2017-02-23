@@ -492,15 +492,15 @@ public class CrowdMember : MonoBehaviour
         {
             // If we don't want everyone to wait for the wave, we can have them jump in time with the wave
             // by dividing the delay by the interval, so we get their immediate start time
-            initialDelay = initialDelay % mJumpInterval;
+            mJumpDelay = mJumpDelay % mJumpInterval;
         }
 
         // Everything is ready, but before we try to jump, set the active behaviour
         mCurrentInfluence = CrowdEnums.BehaviourType.NewWave;
 
-        if (initialDelay > 0)
+        if (mJumpDelay > 0)
         {
-            Invoke(TRY_JUMP_FUNCTION, initialDelay);
+            Invoke(TRY_JUMP_FUNCTION, mJumpDelay);
         }
         else
         {
