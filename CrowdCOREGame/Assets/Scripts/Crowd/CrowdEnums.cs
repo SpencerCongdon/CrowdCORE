@@ -8,8 +8,8 @@ public class CrowdEnums
     {
         None = -1,      // Crowd member is not going to jump
         Normal,         // We are just jumping randomly
-        Influencer,
         NewWave,
+        Influencer,
         JumpTogether,
         Mosh,
         SurgeForward,

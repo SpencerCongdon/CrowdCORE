@@ -59,13 +59,13 @@ public class CrowdManager : Singleton<CrowdManager>
             float waitTime = Random.Range(mMinLogicTime, mMaxLogicTIme);
             yield return new WaitForSeconds(waitTime);
             // Make decision
-            CrowdEnums.BehaviourType randInfluence = CrowdEnums.BehaviourType.Normal;
-            randInfluence = GetRandomWeightedInfluence();
+            CrowdEnums.BehaviourType randBehaviour = CrowdEnums.BehaviourType.Normal;
+            randBehaviour = GetRandomWeightedInfluence();
 
             int randNumInfluencers = Random.Range(1, mMaxInfluencers);
 
             List<int> excludeInfluences = new List<int>();
-            if (randInfluence == CrowdEnums.BehaviourType.SurgeForward)
+            if (randBehaviour == CrowdEnums.BehaviourType.SurgeForward)
             {
                 randNumInfluencers = 1;
             }
@@ -86,7 +86,7 @@ public class CrowdManager : Singleton<CrowdManager>
 
                 int numCrowdiesInfluenced = Random.Range(0, mCrowdMembers.Count);
 
-                if (randInfluence == CrowdEnums.BehaviourType.SurgeForward)
+                if (randBehaviour == CrowdEnums.BehaviourType.SurgeForward)
                 {
                     numCrowdiesInfluenced = mCrowdMembers.Count;
                 }
@@ -94,7 +94,7 @@ public class CrowdManager : Singleton<CrowdManager>
                 if (crowdie != null && crowdieIndex > -1)
                 {
                     excludeInfluences.Add(crowdieIndex);
-                    CrowdInfluenceData data = new CrowdInfluenceData(randInfluence, crowdie, numCrowdiesInfluenced, mInfluenceDuration);
+                    CrowdInfluenceData data = new CrowdInfluenceData(randBehaviour, crowdie, numCrowdiesInfluenced, mInfluenceDuration);
                     crowdie.StartInfluence(data);
                 }
             }
