@@ -100,7 +100,10 @@ public class CrowdMember : MonoBehaviour
     void FixedUpdate()
     {
         CheckForInfluencer();
-        UpdateJumpState();
+        bool justLanded = UpdateJumpState();
+
+        // If we just landed, don't try to jump immediately, in case others want to know about it
+        if (justLanded) return;
 
         switch(mCurrentBehaviour)
         {
@@ -185,8 +188,10 @@ public class CrowdMember : MonoBehaviour
     /// <summary>
     /// Update the state of our jump.
     /// </summary>
-    private void UpdateJumpState()
+    /// <returns>True if the member just landed</returns>
+    private bool UpdateJumpState()
     {
+        bool justLanded = false;
         if (mCurrentJumpState == JumpState.GoingUp)
         {
             // As soon as they reach the top, they are coming down
@@ -204,8 +209,11 @@ public class CrowdMember : MonoBehaviour
                 newVel.y = 0;
                 mRb.velocity = newVel;
                 mCurrentJumpState = JumpState.OnGround;
+                justLanded = true;
             }
         }
+
+        return justLanded;
     }
 
     /// <summary>
@@ -286,10 +294,14 @@ public class CrowdMember : MonoBehaviour
             case CrowdEnums.BehaviourType.Normal:
             case CrowdEnums.BehaviourType.NewWave:
             case CrowdEnums.BehaviourType.Ripple:
-            case CrowdEnums.BehaviourType.Influencer:
                 float min = mOverrideMinJump >= 0 ? mOverrideMinJump : mMinJumpHeight;
                 float max = mOverrideMaxJump >= 0 ? mOverrideMaxJump : mMaxJumpHeight;
                 mCurrentJumpHeight = Random.Range(min, max);
+                break;
+
+            // We need influencers to be consistent
+            case CrowdEnums.BehaviourType.Influencer:
+                mCurrentJumpHeight = mMaxJumpHeight;
                 break;
 
             // The cases where we take the influencer's jump force
@@ -336,6 +348,7 @@ public class CrowdMember : MonoBehaviour
 
             // The cases where crowd members drift around
             case CrowdEnums.BehaviourType.Normal:
+            case CrowdEnums.BehaviourType.Influencer:
             case CrowdEnums.BehaviourType.JumpTogether:
                 float xForce = 0;
                 float zForce = 0;
