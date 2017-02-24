@@ -10,6 +10,7 @@ public class WaveNode : MonoBehaviour
     public float maxHeight;         // Factor by which jumps will vary
     public float waveDuration;      // Time that the wave is active
     public float waveSpeed;         // Modifies how fast the jump propegates through the crowd
+    public bool imposeDelay;        // Whether or not a member must wait for the wave, or join on interval
 
     /// <summary>
     /// Initiate a wave at the current location
@@ -35,10 +36,7 @@ public class WaveNode : MonoBehaviour
                 float distanceToOrigin = (nearPoint - collPos).magnitude;
                 float delay = waveSpeed * distanceToOrigin;
                 
-                // TODO: The crowd member should be calculating these, only pass the jump height
-                //float velocity = VelocityForJump(minHeight);
-                //float interval = TimeForJump(velocity);
-                jumper.JoinWave(delay, waveDuration, minHeight, maxHeight);
+                jumper.JoinWave(delay, waveDuration, maxHeight, minHeight, imposeDelay);
             }
         }
     }
@@ -120,17 +118,5 @@ public class WaveNode : MonoBehaviour
     private Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Quaternion rotation)
     {
         return rotation * (point - pivot) + pivot;
-    }
-
-    private float VelocityForJump(float desiredHeight)
-    {
-        float g = Physics.gravity.magnitude;
-        float initialV = Mathf.Sqrt(desiredHeight * 2 * g);
-        return initialV;
-    }
-
-    private float TimeForJump(float initialVelocity)
-    {
-        return 2 * initialVelocity / Physics.gravity.magnitude;
     }
 }

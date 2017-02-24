@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CrowdMember : MonoBehaviour
 {
@@ -99,15 +97,6 @@ public class CrowdMember : MonoBehaviour
         mRb = GetComponent<Rigidbody>();
     }
 
-    void Update()
-    {
-    }
-
-    void LateUpdate()
-    {
-
-    }
-
     void FixedUpdate()
     {
         CheckForInfluencer();
@@ -117,13 +106,14 @@ public class CrowdMember : MonoBehaviour
         {
             // Jump if we are on the ground
             case CrowdEnums.BehaviourType.Normal:
-            
             case CrowdEnums.BehaviourType.NewWave:
+            case CrowdEnums.BehaviourType.Ripple:
             case CrowdEnums.BehaviourType.SurgeForward:
             case CrowdEnums.BehaviourType.Mosh:
                 TryToJump();
                 break;
 
+            // This is separate just so that we can easily break on it
             case CrowdEnums.BehaviourType.Influencer:
                 TryToJump();
                 break;
@@ -295,6 +285,7 @@ public class CrowdMember : MonoBehaviour
             // The random jump cases
             case CrowdEnums.BehaviourType.Normal:
             case CrowdEnums.BehaviourType.NewWave:
+            case CrowdEnums.BehaviourType.Ripple:
             case CrowdEnums.BehaviourType.Influencer:
                 float min = mOverrideMinJump >= 0 ? mOverrideMinJump : mMinJumpHeight;
                 float max = mOverrideMaxJump >= 0 ? mOverrideMaxJump : mMaxJumpHeight;
@@ -339,6 +330,7 @@ public class CrowdMember : MonoBehaviour
         {
             // The cases where we jump straight up and down
             case CrowdEnums.BehaviourType.NewWave:
+            case CrowdEnums.BehaviourType.Ripple:
                 returnVelocity.y = mCurrentJumpVelocity;
                 break;
 
@@ -499,6 +491,47 @@ public class CrowdMember : MonoBehaviour
 
         // Everything is ready, but before we try to jump, set the active behaviour
         mCurrentBehaviour = CrowdEnums.BehaviourType.NewWave;
+
+        if (mJumpDelay > 0)
+        {
+            Invoke(TRY_JUMP_FUNCTION, mJumpDelay);
+        }
+        else
+        {
+            TryToJump();
+        }
+
+        // Make sure to end the behaviour after the provided period of time
+        Invoke(RESET_FUNCTION, mBehaviourTime);
+    }
+
+    public void JoinRipple(float initialDelay, float waveTime, float jumpMax, float jumpMin = -1, bool imposeDelay = false)
+    {
+        // Erase all old behaviour stuff
+        ResetBehaviour();
+
+        // Set new values
+        mJumpDelay = initialDelay;
+        mBehaviourTime = waveTime;
+        mOverrideMaxJump = jumpMax;
+
+        // If we weren't provided with a minimum, all jumps are the same height
+        mOverrideMinJump = jumpMin != -1 ? jumpMin : jumpMax;
+
+        // The member could jump anywhere within the given range, shoot for the average for the interval
+        float averageJump = (mOverrideMaxJump + mOverrideMinJump) * .5f;
+        float velocity = CalculateJumpVelocity(averageJump);
+        mJumpInterval = CalculateJumpDuration(velocity);
+
+        if (!imposeDelay)
+        {
+            // If we don't want everyone to wait for the wave, we can have them jump in time with the wave
+            // by dividing the delay by the interval, so we get their immediate start time
+            mJumpDelay = mJumpDelay % mJumpInterval;
+        }
+
+        // Everything is ready, but before we try to jump, set the active behaviour
+        mCurrentBehaviour = CrowdEnums.BehaviourType.Ripple;
 
         if (mJumpDelay > 0)
         {
