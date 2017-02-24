@@ -25,6 +25,9 @@ public class CrowdManager : Singleton<CrowdManager>
     [SerializeField]
     private int mMaxInfluencers = 4;
 
+    [SerializeField]
+    private float mInfluenceDuration = 5f;
+
     public override void Awake()
     {
         mCrowdMembers = new List<CrowdMember>();
@@ -56,13 +59,13 @@ public class CrowdManager : Singleton<CrowdManager>
             float waitTime = Random.Range(mMinLogicTime, mMaxLogicTIme);
             yield return new WaitForSeconds(waitTime);
             // Make decision
-            CrowdEnums.InfluenceType randInfluence = CrowdEnums.InfluenceType.None;
-            randInfluence = GetRandomWeightedInfluence();
+            CrowdEnums.BehaviourType randBehaviour = CrowdEnums.BehaviourType.Normal;
+            randBehaviour = GetRandomWeightedInfluence();
 
             int randNumInfluencers = Random.Range(1, mMaxInfluencers);
 
             List<int> excludeInfluences = new List<int>();
-            if (randInfluence == CrowdEnums.InfluenceType.SurgeForward)
+            if (randBehaviour == CrowdEnums.BehaviourType.SurgeForward)
             {
                 randNumInfluencers = 1;
             }
@@ -74,6 +77,8 @@ public class CrowdManager : Singleton<CrowdManager>
                 while (!uniqueCrowdie)
                 {
                     crowdieIndex = Random.Range(mMinCrowdies, mCrowdMembers.Count);
+
+                    // TODO: Why do we keep getting exceptions here
                     crowdie = mCrowdMembers[crowdieIndex];
 
                     uniqueCrowdie = !excludeInfluences.Contains(crowdieIndex);
@@ -81,7 +86,7 @@ public class CrowdManager : Singleton<CrowdManager>
 
                 int numCrowdiesInfluenced = Random.Range(0, mCrowdMembers.Count);
 
-                if (randInfluence == CrowdEnums.InfluenceType.SurgeForward)
+                if (randBehaviour == CrowdEnums.BehaviourType.SurgeForward)
                 {
                     numCrowdiesInfluenced = mCrowdMembers.Count;
                 }
@@ -89,27 +94,28 @@ public class CrowdManager : Singleton<CrowdManager>
                 if (crowdie != null && crowdieIndex > -1)
                 {
                     excludeInfluences.Add(crowdieIndex);
-                    crowdie.StartInfluence(randInfluence, crowdie, numCrowdiesInfluenced);
+                    CrowdInfluenceData data = new CrowdInfluenceData(randBehaviour, crowdie, numCrowdiesInfluenced, mInfluenceDuration);
+                    crowdie.StartInfluence(data);
                 }
             }
         }
     }
 
-    private CrowdEnums.InfluenceType GetRandomWeightedInfluence()
+    private CrowdEnums.BehaviourType GetRandomWeightedInfluence()
     {
-        CrowdEnums.InfluenceType rand = CrowdEnums.InfluenceType.None;
+        CrowdEnums.BehaviourType rand = CrowdEnums.BehaviourType.Normal;
         float randVal = Random.Range(0.0f, 1.0f);
         if(randVal <= 0.05f)
         {
-            rand = CrowdEnums.InfluenceType.SurgeForward;
+            rand = CrowdEnums.BehaviourType.SurgeForward;
         }
         else if (randVal <= 0.50f)
         {
-            rand = CrowdEnums.InfluenceType.Mosh;
+            rand = CrowdEnums.BehaviourType.Mosh;
         }
         else if (randVal <= 1.0f)
         {
-            rand = CrowdEnums.InfluenceType.JumpTogether;            
+            rand = CrowdEnums.BehaviourType.JumpTogether;
         }
         return rand;
     }
