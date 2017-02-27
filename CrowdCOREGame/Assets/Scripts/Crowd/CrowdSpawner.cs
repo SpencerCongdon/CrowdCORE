@@ -25,7 +25,7 @@ public class CrowdSpawner : MonoBehaviour {
         }
         else
         {
-            Debug.LogWarning(this.name + " does not have a valid memberPrefab assigned.");
+            GameLog.LogWarning(this.name + " does not have a valid memberPrefab assigned.", GameLog.Category.Crowd);
         }
 	}
 	
@@ -44,7 +44,7 @@ public class CrowdSpawner : MonoBehaviour {
         // Check to make sure we don't have an existing crowd
         if(this.transform.childCount > 0)
         {
-            Debug.LogWarning("Cannot spawn crowd when spawner already has child objects");
+            GameLog.LogWarning("Cannot spawn crowd when spawner already has child objects", GameLog.Category.Crowd);
             return;
         }
 
@@ -57,17 +57,17 @@ public class CrowdSpawner : MonoBehaviour {
             float memberX = rend.bounds.extents.x * 2f + MinSpacing;
             float memberZ = rend.bounds.extents.z * 2f + MinSpacing;
 
-            //Debug.Log("SpawnCrowd() Members have bounds of " + memberX + "x and " + memberZ + "z");
+            GameLog.Log("SpawnCrowd() Members have bounds of " + memberX + "x and " + memberZ + "z", GameLog.Category.Crowd);
 
             int membersPerX = (int)(CrowdSizeX / memberX);
             int membersPerZ = (int)(CrowdSizeZ / memberZ);
 
-            //Debug.Log("SpawnCrowd() Number of members: " + membersPerX + "x and " + membersPerZ + "z");
+            GameLog.Log("SpawnCrowd() Number of members: " + membersPerX + "x and " + membersPerZ + "z", GameLog.Category.Crowd);
 
             float xSpacing = CrowdSizeX / membersPerX;
             float zSpacing = CrowdSizeZ / membersPerZ;
 
-            //Debug.Log("SpawnCrowd() Spacing: " + xSpacing + "x and " + zSpacing + "z");
+            GameLog.Log("SpawnCrowd() Spacing: " + xSpacing + "x and " + zSpacing + "z", GameLog.Category.Crowd);
 
             DestroyImmediate(firstMember);
 
@@ -77,7 +77,7 @@ public class CrowdSpawner : MonoBehaviour {
         }
         else
         {
-            Debug.LogWarning("CrowdSpawner MemberPrefab does not have a renderer.");
+            GameLog.LogWarning("CrowdSpawner MemberPrefab does not have a renderer.", GameLog.Category.Crowd);
         }
     }
 
@@ -129,7 +129,7 @@ public class CrowdSpawner : MonoBehaviour {
             currentPosZ += zSpacing;
         }
 
-        Debug.Log("CrowdSpawer spawed " + numPlaced + " members");
+        GameLog.Log("CrowdSpawer spawed " + numPlaced + " members", GameLog.Category.Crowd);
         Debug.Assert(numPlaced == (membersPerX * membersPerZ), "Placed: " + numPlaced + " Expected: " + (membersPerX * membersPerZ));
     }
 

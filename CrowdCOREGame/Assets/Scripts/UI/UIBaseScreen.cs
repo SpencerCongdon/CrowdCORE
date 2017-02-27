@@ -60,7 +60,7 @@ namespace CrowdCORE
 
         public virtual void SetPrompts()
         {
-            Debug.Log("Setting Prompts for: " + name);
+            GameLog.Log("Setting Prompts for: " + name, GameLog.Category.UI);
         }
 
         public virtual void Initialize()
@@ -72,7 +72,7 @@ namespace CrowdCORE
 
         public virtual void Shutdown()
         {
-            Debug.Log("Shutting down screen: " + name);
+            GameLog.Log("Shutting down screen: " + name, GameLog.Category.UI);
         }
 
         public virtual void On3dUIBackgroundAnimEvent(UIBackgroundAnimEvent animEvent)

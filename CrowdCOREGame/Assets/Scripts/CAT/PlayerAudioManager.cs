@@ -14,7 +14,7 @@ public class PlayerAudioManager : MonoBehaviour
         source = this.gameObject.GetComponent<AudioSource>();
         if (source == null)
         {
-            Debug.LogError("Player Is Missing AUDIOSOURCE Component");
+            GameLog.LogError("Player Is Missing AUDIOSOURCE Component", GameLog.Category.Audio);
         }
     }
 

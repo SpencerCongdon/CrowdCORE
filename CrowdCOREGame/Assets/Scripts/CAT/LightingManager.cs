@@ -56,26 +56,26 @@ public class LightingManager : Singleton<LightingManager>
 
     private IEnumerator RunLightOperation(LightingDataWrapper data)
     {
-        Debug.Log("Starting Lighting Operation: " + data.DebugName);
+        GameLog.Log("Starting Lighting Operation: " + data.DebugName, GameLog.Category.Lighting);
         runningCount = 0;
         for(int i = 0; i < data.Data.Count; i++)
         {
             switch (data.Data[i].lightingEffect)
             {
                 case LightingEffect.Color:
-                    Debug.Log("Changing color of light: " + data.Data[i].light.name);
+                    GameLog.Log("Changing color of light: " + data.Data[i].light.name, GameLog.Category.Lighting);
                     runningCount++;
                     StartCoroutine(ChangeColor(data.Data[i], data.Length));
                     break;
                 case LightingEffect.Off:
                 case LightingEffect.On:
                     runningCount++;
-                    Debug.Log("Turning on or off Light: " + data.Data[i].light.name);
+                    GameLog.Log("Turning on or off Light: " + data.Data[i].light.name, GameLog.Category.Lighting);
                     StartCoroutine(OnOffLight(data.Data[i], data.Length));
                     break;
                 case LightingEffect.Strobe:
                     runningCount++;
-                    //Debug.Log("Strobing Light: " + data.Data[i].light.name);
+                    GameLog.Log("Strobing Light: " + data.Data[i].light.name, GameLog.Category.Lighting);
                     StartCoroutine(StrobeLight(data.Data[i], data.Length));
                     break;
                 default:

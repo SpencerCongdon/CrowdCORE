@@ -81,7 +81,7 @@ public class Surfer : MonoBehaviour {
                 GameManager.Instance.OnPlayerDead(SurferId);
             }
 
-            Debug.Log("Player " + SurferId + " is TOTALLY FUCKING DEAD!!! \\m/ >_< \\m/");
+            GameLog.Log("Player " + SurferId + " is TOTALLY FUCKING DEAD!!! \\m/ >_< \\m/", GameLog.Category.Surfer);
         }
     }
 

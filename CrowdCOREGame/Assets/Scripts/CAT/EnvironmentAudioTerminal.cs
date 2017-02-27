@@ -69,7 +69,7 @@ public class EnvironmentAudioTerminal : MonoBehaviour
     float ResetRandomTimer()
     {
         float newTime = (float)Random.Range(8, 16);
-        Debug.Log(newTime);
+        GameLog.Log(newTime, GameLog.Category.Audio);
         return newTime;
     }
 
