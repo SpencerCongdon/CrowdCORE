@@ -570,7 +570,7 @@ public class CrowdMember : MonoBehaviour
             case CrowdEnums.BehaviourType.Mosh:
                 if(mCurrentInfluencer == null)
                 {
-                    Debug.LogError("Crowd member lost influencer while being influenced - Clearing");
+                    GameLog.LogError("Crowd member lost influencer while being influenced - Clearing", GameLog.Category.Crowd);
                     ResetBehaviour();
                 }
                 break;

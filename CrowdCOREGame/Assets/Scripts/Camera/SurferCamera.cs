@@ -106,7 +106,7 @@ public class SurferCamera : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Can't perform LookAt lerp without points to reference");
+            GameLog.LogError("Can't perform LookAt lerp without points to reference", GameLog.Category.Camera);
         }
     }
 
@@ -118,7 +118,7 @@ public class SurferCamera : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Can't perform HoldLook without LowPoint to reference");
+            GameLog.LogError("Can't perform HoldLook without LowPoint to reference", GameLog.Category.Camera);
         }
     }
     

@@ -23,7 +23,7 @@ public class SurferSpawner : Singleton<SurferSpawner>
 
         int numPlayers = PlayerManager.Instance.NumPlayers;
 
-        if (spawnPositions.Length < numPlayers) Debug.LogWarningFormat("We have %d players, but only %d spawn positions", numPlayers, spawnPositions.Length);
+        if (spawnPositions.Length < numPlayers) GameLog.LogWarningFormat("We have %d players, but only %d spawn positions", GameLog.Category.Surfer, numPlayers, spawnPositions.Length);
 
         for (int i = 0; i < numPlayers; i++)
         {

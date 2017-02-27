@@ -9,26 +9,34 @@ public class GameLog : Singleton<GameLog>
     public enum Category
     {
         General,    // After General, try to keep this in alphabetical order
+        Audio,
         Camera,
         Crowd,
         Lighting,
-        Surfer
+        Surfer,
+        UI
     }
 
     [SerializeField] private bool logAllWarnings;
 
     // Category information
-    [SerializeField] private bool LogCamera;
+    [SerializeField] private bool logAudio;
+    [SerializeField] private Color audioColour;
+
+    [SerializeField] private bool logCamera;
     [SerializeField] private Color cameraColour;
 
-    [SerializeField] private bool LogCrowd;
+    [SerializeField] private bool logCrowd;
     [SerializeField] private Color crowdColour;
 
-    [SerializeField] private bool LogLighting;
+    [SerializeField] private bool logLighting;
     [SerializeField] private Color lightingColour;
 
-    [SerializeField] private bool LogPlayer;
-    [SerializeField] private Color PlayerColour;
+    [SerializeField] private bool logSurfer;
+    [SerializeField] private Color surferColour;
+
+    [SerializeField] private bool logUI;
+    [SerializeField] private Color uiColour;
 
     #region Public Logging Functions
     public static void Log(object message, Category category = Category.General)
@@ -71,14 +79,16 @@ public class GameLog : Singleton<GameLog>
         {
             case Category.General:
                 return true;
+            case Category.Audio:
+                return Instance.logAudio;
             case Category.Camera:
-                return Instance.LogCamera;
+                return Instance.logCamera;
             case Category.Crowd:
-                return Instance.LogCrowd;
+                return Instance.logCrowd;
             case Category.Lighting:
-                return Instance.LogLighting;
+                return Instance.logLighting;
             case Category.Surfer:
-                return Instance.LogPlayer;
+                return Instance.logSurfer;
             default:
                 return false;
         }
@@ -91,6 +101,10 @@ public class GameLog : Singleton<GameLog>
 
         switch(category)
         {
+            case Category.Audio:
+                categoryName = "Audio";
+                colour = Instance.audioColour;
+                break;
             case Category.Camera:
                 categoryName = "Camera";
                 colour = Instance.cameraColour;
@@ -105,7 +119,7 @@ public class GameLog : Singleton<GameLog>
                 break;
             case Category.Surfer:
                 categoryName = "Player";
-                colour = Instance.PlayerColour;
+                colour = Instance.surferColour;
                 break;
             default:
                 // Just use the default settings
