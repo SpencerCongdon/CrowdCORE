@@ -23,17 +23,17 @@ public class SurferControl : MonoBehaviour
     private Surfer surfer;
 
     // TODO: These should really be rigidbodies
-    [SerializeField] private Transform mainBody;
-    [SerializeField] private Transform rightArm;
-    [SerializeField] private Transform leftArm;
-    [SerializeField] private Transform rightLeg;
-    [SerializeField] private Transform leftLeg;
+    [SerializeField] private Rigidbody mainBody;
+    [SerializeField] private Rigidbody rightHand;
+    [SerializeField] private Rigidbody leftHand;
+    [SerializeField] private Rigidbody rightFoot;
+    [SerializeField] private Rigidbody leftFoot;
 
-    public Transform MainBody { get { return mainBody; } }
+    public Rigidbody MainBody { get { return mainBody; } }
 
     // Movement
-    [SerializeField]
-    private float topPower;
+    [SerializeField] private float movementPower;
+    [SerializeField] private float rollPower;
 
     private Rewired.Player playerIn;
 
@@ -48,12 +48,11 @@ public class SurferControl : MonoBehaviour
 	public float strikeChargeTime = 0.5f;
 	public float strikePower;
 
-    private PlayerState currentState;
+    [SerializeField] private PlayerState currentState;
+    [SerializeField] private RollStatus currentRoll;
 
-    [SerializeField] private float xMoveInput;
-    [SerializeField] private float zMoveInput;
+    // For inspector
     [SerializeField] private Vector3 lastMovement;
-
 
     void Start()
 	{
@@ -79,11 +78,27 @@ public class SurferControl : MonoBehaviour
 
 	void Update () 
 	{
+        // Everything we need to update all the time
+        UpdateSurferRoll();
+
         if(currentState == PlayerState.Moving)
         {
-            ProcessInput();
+            UpdateInput();
         }
 	}
+
+    void UpdateSurferRoll()
+    {
+        float forwardY = mainBody.transform.forward.y;
+        if(currentRoll == RollStatus.FacingDown && forwardY >= 0)
+        {
+            currentRoll = RollStatus.FacingUp;
+        }
+        else if(currentRoll == RollStatus.FacingUp && forwardY < 0)
+        {
+            currentRoll = RollStatus.FacingDown;
+        }
+    }
 
     public void SetPlayerInput(int playerId)
     {
@@ -94,69 +109,72 @@ public class SurferControl : MonoBehaviour
         }
     }
 
-    public void LimbStrike(Transform limb)
+    public void LimbStrike(Rigidbody limb)
     {
         Vector3 bodyPosition = mainBody.position;
         Vector3 strikeDirection = (limb.position - bodyPosition);
 
         limb.transform.position += strikeDirection / 2;
-        limb.gameObject.GetComponent<Rigidbody>().AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
+        limb.AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
     }
 
-    private void ProcessInput()
+    private void UpdateInput()
     {
         // Drop out if no one is controlling us
         if (playerIn == null) return;
-         
-        // Test Controls
-        if(playerIn.GetButtonDown(ACTION.Punch))
+
+        PerformMovement(playerIn.GetAxis(ACTION.MoveHorizontal), playerIn.GetAxis(ACTION.MoveVertical));
+
+        if (playerIn.GetButtonDown(ACTION.Punch))
         {
-            LimbStrike(leftArm);
-            LimbStrike(rightArm);
+            PerformPunch();
         }
             
         if (playerIn.GetButtonDown(ACTION.Kick))
         {
-            LimbStrike(leftLeg);
-            LimbStrike(rightLeg);
+            PerformKick();
         }
+    }
 
-
-        // Update these now
-        xMoveInput = playerIn.GetAxis(ACTION.MoveHorizontal);
-        zMoveInput = playerIn.GetAxis(ACTION.MoveVertical);
-
+    private void PerformMovement(float xMovement, float yMovement)
+    {
         Vector3 movement = Vector3.zero;
-        if(isCameraRelative && surfCamera != null)
+        if (isCameraRelative && surfCamera != null)
         {
-            movement = CalculateRelativeMovement();
+            movement = (surfCamera.transform.right * xMovement) + (surfCamera.transform.forward * yMovement);
+            movement.y = 0;
         }
         else
         {
-            movement = CalculateNormalMovement();
+            movement = new Vector3(xMovement, 0, yMovement);
         }
 
         lastMovement = movement;
 
         // Move if necessary
-        if(movement != Vector3.zero)
+        if (movement != Vector3.zero)
         {
-            mainBody.gameObject.GetComponent<Rigidbody>().AddForce(movement.normalized * topPower);
+            mainBody.AddForce(movement.normalized * movementPower);
         }
-
     }
 
-    private Vector3 CalculateNormalMovement()
+    private void PerformRoll()
     {
-        return new Vector3(xMoveInput, 0, zMoveInput);
+        mainBody.AddRelativeTorque(new Vector3(0, rollPower, 0));
     }
 
-    private Vector3 CalculateRelativeMovement()
+    private void PerformPunch()
     {
-        Vector3 move = (surfCamera.transform.right * xMoveInput) + (surfCamera.transform.forward * zMoveInput);
-        move.y = 0;
-        return move;
+        LimbStrike(leftHand);
+        LimbStrike(rightHand);
     }
+
+    private void PerformKick()
+    {
+        LimbStrike(leftFoot);
+        LimbStrike(rightFoot);
+    }
+
 
     void OnDrawGizmos()
     {

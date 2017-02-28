@@ -29,7 +29,7 @@ public class Surfer : MonoBehaviour {
 
     public SurferState CurrentState { get { return currentState; } set { currentState = value; } }
     public PlayerLight CurrentLight { get { return playerLight; } set { playerLight = value; } }
-    public Transform MainBody { get { return control.MainBody; } }
+    public Rigidbody MainBody { get { return control.MainBody; } }
 
     [SerializeField]
     private Collider mainCollider;
