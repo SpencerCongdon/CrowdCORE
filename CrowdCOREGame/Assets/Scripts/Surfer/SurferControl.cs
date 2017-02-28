@@ -7,15 +7,15 @@ public class SurferControl : MonoBehaviour
 {
     public enum PlayerState
     {
-        MOVING,
-        PUNCH,
-        KICK
+        Moving,
+        Punch,
+        Kick
     }
 
-    public enum MovementType
+    public enum RollStatus
     {
-        CONSTANT,
-        IMPULSE
+        FacingUp,
+        FacingDown
     }
 
     // Necessary for operation
@@ -33,22 +33,7 @@ public class SurferControl : MonoBehaviour
 
     // Movement
     [SerializeField]
-    private MovementType movementType;
-    [SerializeField]
-    private float cooldown;
-    [SerializeField]
     private float topPower;
-    [SerializeField]
-    private float torquePower;
-
-    // Headbanging
-    public Transform headBone;
-	public float minRot = -45.0f;
-	public float maxRot = 45.0f;
-	public float rotSpeed = 2.0f;
-	private float t = 0.0f;
-	private Quaternion start;
-	private Quaternion end;
 
     private Rewired.Player playerIn;
 
@@ -72,9 +57,6 @@ public class SurferControl : MonoBehaviour
 
     void Start()
 	{
-        start = headBone.localRotation * Quaternion.Euler(transform.right * minRot);
-        end = headBone.localRotation * Quaternion.Euler(transform.right * maxRot);
-
         // TODO: Why is this part of control
         for (int i = 0; i < playerShirt.Count; i++)
         {
@@ -92,15 +74,12 @@ public class SurferControl : MonoBehaviour
 
         surfCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 
-        currentState = PlayerState.MOVING;
+        currentState = PlayerState.Moving;
     }
 
 	void Update () 
 	{
-        // TODO: Why is headbanging part of control?
-        UpdateHeadbanging();
-
-        if(currentState == PlayerState.MOVING)
+        if(currentState == PlayerState.Moving)
         {
             ProcessInput();
         }
@@ -124,13 +103,6 @@ public class SurferControl : MonoBehaviour
         limb.gameObject.GetComponent<Rigidbody>().AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
     }
 
-    private void UpdateHeadbanging()
-    {
-        // Head Bang
-        t = Mathf.PingPong(Time.time * rotSpeed, 1.0f);
-        headBone.localRotation = Quaternion.Slerp(start, end, t);
-    }
-
     private void ProcessInput()
     {
         // Drop out if no one is controlling us
@@ -149,39 +121,29 @@ public class SurferControl : MonoBehaviour
             LimbStrike(rightLeg);
         }
 
-        switch (movementType)
+
+        // Update these now
+        xMoveInput = playerIn.GetAxis(ACTION.MoveHorizontal);
+        zMoveInput = playerIn.GetAxis(ACTION.MoveVertical);
+
+        Vector3 movement = Vector3.zero;
+        if(isCameraRelative && surfCamera != null)
         {
-            case MovementType.CONSTANT:
-                {
-                    // Update these now
-                    xMoveInput = playerIn.GetAxis(ACTION.MoveHorizontal);
-                    zMoveInput = playerIn.GetAxis(ACTION.MoveVertical);
-
-                    Vector3 movement = Vector3.zero;
-                    if(isCameraRelative && surfCamera != null)
-                    {
-                        movement = CalculateRelativeMovement();
-                    }
-                    else
-                    {
-                        movement = CalculateNormalMovement();
-                    }
-
-                    lastMovement = movement;
-
-                    // Move if necessary
-                    if(movement != Vector3.zero)
-                    {
-                        mainBody.gameObject.GetComponent<Rigidbody>().AddForce(movement.normalized * topPower);
-                    }
-                    
-                    break;
-                }
-
-            case MovementType.IMPULSE:
-
-                break;
+            movement = CalculateRelativeMovement();
         }
+        else
+        {
+            movement = CalculateNormalMovement();
+        }
+
+        lastMovement = movement;
+
+        // Move if necessary
+        if(movement != Vector3.zero)
+        {
+            mainBody.gameObject.GetComponent<Rigidbody>().AddForce(movement.normalized * topPower);
+        }
+
     }
 
     private Vector3 CalculateNormalMovement()

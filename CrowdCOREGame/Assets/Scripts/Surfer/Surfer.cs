@@ -101,4 +101,10 @@ public class Surfer : MonoBehaviour {
             control.SetPlayerInput(playerId);
         }
     }
+
+    public void DebugSetPlayerId(int newId)
+    {
+        playerId = player.PlayerID;
+        control.SetPlayerInput(playerId);
+    }
 }
