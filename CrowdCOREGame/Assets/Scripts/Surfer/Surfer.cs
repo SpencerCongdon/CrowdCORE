@@ -5,7 +5,6 @@ using UnityEngine;
 /// <summary>
 /// A class for tracking base information about the surfer character
 /// </summary>
-[RequireComponent(typeof(SurferControl))]
 public class Surfer : MonoBehaviour {
 
     public enum SurferState
@@ -32,8 +31,6 @@ public class Surfer : MonoBehaviour {
     public Rigidbody MainBody { get { return control.MainBody; } }
 
     [SerializeField]
-    private Collider mainCollider;
-
     private int playerId = -1;
     public int SurferId { get { return playerId; } }
 
@@ -65,7 +62,14 @@ public class Surfer : MonoBehaviour {
 
     }
 
-    
+    void OnCollisionEnter(Collision c)
+    {
+        if (c.gameObject.tag == "DeadZone")
+        {
+            OnHitDeadZone();
+        }
+    }
+
     public void OnHitDeadZone()
     {
         if (currentState != Surfer.SurferState.DEAD)

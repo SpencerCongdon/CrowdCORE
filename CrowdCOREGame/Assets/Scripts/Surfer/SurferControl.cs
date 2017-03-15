@@ -196,5 +196,13 @@ public class SurferControl : MonoBehaviour
             toPoint.y = Y_POS;
             Gizmos.DrawLine(fromPoint, toPoint);
         }
+
+        Gizmos.color = new Color(1f, 0f, 1f); 
+        toPoint = mainBody.transform.position + (mainBody.transform.right * SCALE);
+        Gizmos.DrawLine(mainBody.transform.position, toPoint);
+        toPoint = mainBody.transform.position - (mainBody.transform.right * SCALE);
+        Gizmos.DrawLine(mainBody.transform.position, toPoint);
+        toPoint = mainBody.transform.position - (mainBody.transform.up * SCALE);
+        Gizmos.DrawLine(mainBody.transform.position, toPoint);
     }
 }
