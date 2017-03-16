@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using RewiredConsts;
+﻿using UnityEngine;
 
+/// <summary>
+/// A class for controlling the movement and action of a Surfer
+/// </summary>
 [RequireComponent(typeof(Surfer))]
 public class SurferControl : MonoBehaviour
 {
@@ -19,34 +20,24 @@ public class SurferControl : MonoBehaviour
     }
 
     // Necessary for operation
-    [SerializeField]
-    private Surfer surfer;
+    [SerializeField] private Surfer surfer;
 
-    // TODO: These should really be rigidbodies
     [SerializeField] private Rigidbody mainBody;
     [SerializeField] private Rigidbody rightHand;
     [SerializeField] private Rigidbody leftHand;
     [SerializeField] private Rigidbody rightFoot;
     [SerializeField] private Rigidbody leftFoot;
 
-    public Rigidbody MainBody { get { return mainBody; } }
-
     // Movement
     [SerializeField] private float movementPower;
     [SerializeField] private float rollPower;
+    [SerializeField] private bool isCameraRelative = true;
 
-    private Rewired.Player playerIn;
-
-	public List<Material> playerShirtMaterials;
-	public List<SkinnedMeshRenderer> playerShirt;
-
-    private Camera surfCamera;
-    [SerializeField]
-    private bool isCameraRelative = true;
+    private Camera surfCamera;  // Necessary for camera relative movement
 
     // Striking
-	public float strikeChargeTime = 0.5f;
-	public float strikePower;
+    public float strikeChargeTime = 0.5f;
+    public float strikePower;
 
     [SerializeField] private PlayerState currentState;
     [SerializeField] private RollStatus currentRoll;
@@ -54,89 +45,40 @@ public class SurferControl : MonoBehaviour
     // For inspector
     [SerializeField] private Vector3 lastMovement;
 
+    #region Properties
+    public Rigidbody MainBody { get { return mainBody; } }
+    public PlayerState CurrentState { get { return currentState; } }
+    #endregion // Properties
+
+    #region Monobehaviour Functions
     void Start()
-	{
-        // TODO: Why is this part of control
-        for (int i = 0; i < playerShirt.Count; i++)
-        {
-            if (i != 0)
-            {
-                Material[] currentMats = playerShirt[i].materials;
-                currentMats[1] = playerShirtMaterials[0]; // Change material
-                playerShirt[i].materials = currentMats;
-            }
-            else
-            {
-                playerShirt[i].material = playerShirtMaterials[0]; // Change material
-            }
-        }
+    {
+        currentState = PlayerState.Moving;
 
         surfCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 
-        currentState = PlayerState.Moving;
+        if (surfer == null)
+        {
+            surfer = GetComponent<Surfer>();
+        }
     }
 
-	void Update () 
-	{
-        // Everything we need to update all the time
-        UpdateSurferRoll();
-
-        if(currentState == PlayerState.Moving)
-        {
-            UpdateInput();
-        }
-	}
-
-    void UpdateSurferRoll()
+    void Update () 
     {
         float forwardY = mainBody.transform.forward.y;
-        if(currentRoll == RollStatus.FacingDown && forwardY >= 0)
+        if (currentRoll == RollStatus.FacingDown && forwardY >= 0)
         {
             currentRoll = RollStatus.FacingUp;
         }
-        else if(currentRoll == RollStatus.FacingUp && forwardY < 0)
+        else if (currentRoll == RollStatus.FacingUp && forwardY < 0)
         {
             currentRoll = RollStatus.FacingDown;
         }
     }
+    #endregion // Monobehaviour Functions
 
-    public void SetPlayerInput(int playerId)
-    {
-        if(playerId >= 0)
-        {
-            playerIn = Rewired.ReInput.players.GetPlayer(playerId);
-            playerIn.controllers.maps.SetMapsEnabled(true, Category.Surfer);
-        }
-    }
-
-    public void LimbStrike(Rigidbody limb)
-    {
-        Vector3 bodyPosition = mainBody.position;
-        Vector3 strikeDirection = (limb.position - bodyPosition);
-
-        limb.transform.position += strikeDirection / 2;
-        limb.AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
-    }
-
-    private void UpdateInput()
-    {
-        // Drop out if no one is controlling us
-        if (playerIn == null) return;
-
-        PerformMovement(playerIn.GetAxis(ACTION.MoveHorizontal), playerIn.GetAxis(ACTION.MoveVertical));
-
-        if (playerIn.GetButtonDown(ACTION.Punch))
-        {
-            PerformPunch();
-        }
-            
-        if (playerIn.GetButtonDown(ACTION.Kick))
-        {
-            PerformKick();
-        }
-    }
-
-    private void PerformMovement(float xMovement, float yMovement)
+    #region Movement and Actions
+    public void PerformMovement(float xMovement, float yMovement)
     {
         Vector3 movement = Vector3.zero;
         if (isCameraRelative && surfCamera != null)
@@ -158,24 +100,36 @@ public class SurferControl : MonoBehaviour
         }
     }
 
-    private void PerformRoll()
+    public void PerformRoll()
     {
         mainBody.AddRelativeTorque(new Vector3(0, rollPower, 0));
     }
 
-    private void PerformPunch()
+    public void PerformPunch()
     {
         LimbStrike(leftHand);
         LimbStrike(rightHand);
     }
 
-    private void PerformKick()
+    public void PerformKick()
     {
         LimbStrike(leftFoot);
         LimbStrike(rightFoot);
     }
+    #endregion // Movement and Actions
 
+    #region Private Functions
+    private void LimbStrike(Rigidbody limb)
+    {
+        Vector3 bodyPosition = mainBody.position;
+        Vector3 strikeDirection = (limb.position - bodyPosition);
 
+        limb.transform.position += strikeDirection / 2;
+        limb.AddForce(-strikeDirection.normalized * strikePower, ForceMode.Impulse);
+    }
+    #endregion // Private Functions
+
+    #region Debugging
     void OnDrawGizmos()
     {
         const float Y_POS = 0.1f;
@@ -205,4 +159,5 @@ public class SurferControl : MonoBehaviour
         toPoint = mainBody.transform.position - (mainBody.transform.up * SCALE);
         Gizmos.DrawLine(mainBody.transform.position, toPoint);
     }
+    #endregion // Debugging
 }

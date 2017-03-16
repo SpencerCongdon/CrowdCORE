@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraRelTest : MonoBehaviour {
 
@@ -13,7 +11,7 @@ public class CameraRelTest : MonoBehaviour {
         GameObject newSurfer = Instantiate(SurferPrefab, new Vector3(0, 5, 0), new Quaternion()) as GameObject;
 
         // Just assign first controller to it
-        newSurfer.GetComponent<Surfer>().SetPlayer(new SurferPlayer(0));
+        newSurfer.GetComponent<HumanSurfer>().SetPlayer(new SurferPlayer(0));
     }
 	
 	// Update is called once per frame
