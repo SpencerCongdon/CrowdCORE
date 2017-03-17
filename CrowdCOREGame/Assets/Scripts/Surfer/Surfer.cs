@@ -13,11 +13,12 @@ public class Surfer : MonoBehaviour {
     }
 
     [SerializeField]
+    protected SurferState currentState = SurferState.ALIVE;
+    [SerializeField]
     private SurferControl control;
     [SerializeField]
-    private SurferState currentState = SurferState.ALIVE;
-    [SerializeField]
     private SurferLight playerLight;
+
     [SerializeField]
     public List<Material> playerShirtMaterials;
     [SerializeField]
@@ -29,6 +30,8 @@ public class Surfer : MonoBehaviour {
     [SerializeField]
     protected int surferId = -1;
     public int SurferId { get { return surferId; } }
+
+    [SerializeField] protected bool canDie = true;
 
     // Use this for initialization
     void Start ()
@@ -58,7 +61,7 @@ public class Surfer : MonoBehaviour {
 
     public void OnHitDeadZone()
     {
-        if (currentState != Surfer.SurferState.DEAD)
+        if (canDie &&  currentState != Surfer.SurferState.DEAD)
         {
             control.enabled = false;
             currentState = Surfer.SurferState.DEAD;

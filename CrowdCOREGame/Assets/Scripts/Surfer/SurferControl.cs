@@ -78,17 +78,17 @@ public class SurferControl : MonoBehaviour
     #endregion // Monobehaviour Functions
 
     #region Movement and Actions
-    public void PerformMovement(float xMovement, float yMovement)
+    public void PerformMovement(float xMovement, float zMovement)
     {
         Vector3 movement = Vector3.zero;
         if (isCameraRelative && surfCamera != null)
         {
-            movement = (surfCamera.transform.right * xMovement) + (surfCamera.transform.forward * yMovement);
+            movement = (surfCamera.transform.right * xMovement) + (surfCamera.transform.forward * zMovement);
             movement.y = 0;
         }
         else
         {
-            movement = new Vector3(xMovement, 0, yMovement);
+            movement = new Vector3(xMovement, 0, zMovement);
         }
 
         lastMovement = movement;
@@ -132,14 +132,14 @@ public class SurferControl : MonoBehaviour
     #region Debugging
     void OnDrawGizmos()
     {
-        const float Y_POS = 0.1f;
-        const float SCALE = 10;
+        float yPos = transform.position.y;
+        const float SCALE = 15;
 
         // Draw movement result
-        Gizmos.color = Color.blue;
+        Gizmos.color = Color.cyan;
         Vector3 fromPoint = mainBody.position;
-        fromPoint.y = Y_POS;
-        Vector3 toPoint = new Vector3(fromPoint.x + (lastMovement.x * SCALE), Y_POS, fromPoint.z + (lastMovement.z * SCALE));
+        fromPoint.y = yPos;
+        Vector3 toPoint = new Vector3(fromPoint.x + (lastMovement.x * SCALE), yPos, fromPoint.z + (lastMovement.z * SCALE));
         Gizmos.DrawLine(fromPoint, toPoint);
 
         if(isCameraRelative && surfCamera != null)
@@ -147,16 +147,17 @@ public class SurferControl : MonoBehaviour
             // Draw camera forward
             Gizmos.color = Color.red;
             toPoint = fromPoint + (surfCamera.transform.forward * SCALE);
-            toPoint.y = Y_POS;
+            toPoint.y = yPos;
             Gizmos.DrawLine(fromPoint, toPoint);
         }
 
+        const float ROLL_SCALE = 5;
         Gizmos.color = new Color(1f, 0f, 1f); 
-        toPoint = mainBody.transform.position + (mainBody.transform.right * SCALE);
+        toPoint = mainBody.transform.position + (mainBody.transform.right * ROLL_SCALE);
         Gizmos.DrawLine(mainBody.transform.position, toPoint);
-        toPoint = mainBody.transform.position - (mainBody.transform.right * SCALE);
+        toPoint = mainBody.transform.position - (mainBody.transform.right * ROLL_SCALE);
         Gizmos.DrawLine(mainBody.transform.position, toPoint);
-        toPoint = mainBody.transform.position - (mainBody.transform.up * SCALE);
+        toPoint = mainBody.transform.position - (mainBody.transform.up * ROLL_SCALE);
         Gizmos.DrawLine(mainBody.transform.position, toPoint);
     }
     #endregion // Debugging
