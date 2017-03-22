@@ -25,6 +25,10 @@ public class Laser : MonoBehaviour
     public float widthDuration = 1f;
     public bool isGrowing = true;
 
+    public bool xAligned = false;
+    public bool yAligned = false;
+    public bool zAligned = false;
+
     // Use this for initialization
     void Start()
     {
@@ -62,6 +66,23 @@ public class Laser : MonoBehaviour
     {
         line.SetPosition(0, start);
         line.SetPosition(1, end);
+    }
+
+    public void SetXLaser()
+    {
+
+    }
+
+    public void SetYLaser(float oneExtent, float otherExtent, float firstDimension, float secondDimension)
+    {
+        Vector3 start = new Vector3(firstDimension, oneExtent, secondDimension);
+        Vector3 end = new Vector3(firstDimension, otherExtent, secondDimension);
+        SetLaser(start, end);
+    }
+
+    public void SetZLaser()
+    {
+
     }
 
     private IEnumerator Flicker()

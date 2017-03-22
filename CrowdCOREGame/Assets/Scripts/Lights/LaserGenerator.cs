@@ -55,49 +55,114 @@ public class LaserGenerator : MonoBehaviour
             return;
         }
 
+        // We need the distance along the X that we are rendering
+        float minExtent, maxExtent;
+        float minDim1, maxDim1;
+        float minDim2, maxDim2;
+        float currDim1, currDim2;
+        minExtent = maxExtent = minDim1 = maxDim1 = 
+            minDim2 = maxDim2 = currDim1 = currDim2 = 0;
+
+        Vector3 start = new Vector3();
+        Vector3 end = new Vector3();
+
         // Place them along the X
-        if(AlignX)
+        if (AlignX)
         {
-            // We need the distance along the X that we are rendering
-            float minX = transform.position.x - HalfSizeX;
-            float maxX = transform.position.x + HalfSizeX;
+            // X is the extents
+            minExtent = transform.position.x - HalfSizeX;
+            maxExtent = transform.position.x + HalfSizeX;
 
-            // All the values for controlling the extents of the lasers
-            float startZ = transform.position.z - HalfSizeZ;
-            float currentY = transform.position.y - HalfSizeY;
-            float currentZ = startZ;
-            float maxY = transform.position.y + HalfSizeY;
-            float maxZ = transform.position.z + HalfSizeZ;
+            // Y is dimension one
+            minDim1 = transform.position.y - HalfSizeY;
+            maxDim1 = transform.position.y + HalfSizeY;
 
-            // The vectors for the line
-            Vector3 start = new Vector3(minX, 0, 0);
-            Vector3 end = new Vector3(maxX, 0, 0);
+            // Z is dimension two
+            minDim2 = transform.position.z - HalfSizeZ;
+            maxDim2 = transform.position.z + HalfSizeZ;
 
-            while(currentY <= maxY)
+            start = new Vector3(minExtent, 0, 0);
+            end = new Vector3(maxExtent, 0, 0);
+        }
+        else if (AlignY)
+        {
+            // X is dimension one
+            minDim1 = transform.position.x - HalfSizeX;
+            maxDim1 = transform.position.x + HalfSizeX;
+
+            // Y is the extents
+            minExtent = transform.position.y - HalfSizeY;
+            maxExtent = transform.position.y + HalfSizeY;
+
+            // Z is dimension two
+            minDim2 = transform.position.z - HalfSizeZ;
+            maxDim2 = transform.position.z + HalfSizeZ;
+
+            start = new Vector3(0, minExtent, 0);
+            end = new Vector3(0, maxExtent, 0);
+        }
+        else
+        {
+            // X is dimension one
+            minDim1 = transform.position.x - HalfSizeX;
+            maxDim1 = transform.position.x + HalfSizeX;
+
+            // Y is dimension two
+            minDim2 = transform.position.y - HalfSizeY;
+            maxDim2 = transform.position.y + HalfSizeY;
+
+            // Z is the extents
+            minExtent = transform.position.z - HalfSizeZ;
+            maxExtent = transform.position.z + HalfSizeZ;
+
+            start = new Vector3(0, 0, minExtent);
+            end = new Vector3(0, 0, maxExtent);
+        }
+
+        currDim1 = minDim1;
+        currDim2 = minDim2;
+        
+
+        while (currDim1 <= maxDim1)
+        {
+            if(AlignX)
             {
-                start.y = currentY;
-                end.y = currentY;
+                start.y = currDim1;
+                end.y = currDim1;
+            }
+            else
+            {
+                start.x = currDim1;
+                end.x = currDim1;
+            }
 
-                while (currentZ <= maxZ)
+            while (currDim2 <= maxDim2)
+            {
+                if (AlignZ)
                 {
-                    start.z = currentZ;
-                    end.z = currentZ;
-
-                    // Create and place laser
-                    Laser newLaser = Instantiate<Laser>(LaserPrefab);
-                    newLaser.transform.parent = this.transform;
-                    newLaser.SetLaser(start, end);
-
-                    // Update values
-                    // TODO: Randomize this
-                    currentZ += MinSpacingZ;
-                    
+                    start.y = currDim2;
+                    end.y = currDim2;
+                }
+                else
+                {
+                    start.z = currDim2;
+                    end.z = currDim2;
                 }
 
-                // TODO: Randomize this if necessary
-                currentY += MinSpacingY;
-                currentZ = startZ;
+                // Create and place laser
+                Laser newLaser = Instantiate<Laser>(LaserPrefab);
+                newLaser.transform.parent = this.transform;
+
+                newLaser.SetLaser(start, end);
+
+                // Update values
+                // TODO: Randomize this
+                currDim2 += MinSpacingZ;
             }
+
+            // TODO: Randomize this if necessary
+            currDim1 += MinSpacingY;
+            currDim2 = minDim2;
         }
 
     }
