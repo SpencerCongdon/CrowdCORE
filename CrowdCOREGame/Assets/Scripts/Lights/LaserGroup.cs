@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class LaserGenerator : MonoBehaviour
+public class LaserGroup : MonoBehaviour
 {
     static Color gizmoColour = new Color(0.0f, 0.9f, 0.2f, 0.4f);
 
@@ -22,6 +22,15 @@ public class LaserGenerator : MonoBehaviour
     public bool AlignZ = false;
 
     public Laser LaserPrefab;
+
+    public Color first = Color.white;
+    public Color second = Color.white;
+
+    public float xMag = 0f;
+    public float yMag = 0f;
+    public float zMag = 0f;
+
+    private List<Laser> lasers = new List<Laser>();
 
     // Use this for initialization
     void Start ()
@@ -54,6 +63,9 @@ public class LaserGenerator : MonoBehaviour
             GameLog.LogWarning("Cannot spawn lasers when spawner already has child objects", GameLog.Category.Lighting);
             return;
         }
+
+        // Make sure we are only generating for one dimension
+        CheckAlignments();
 
         // We need the distance along the X that we are rendering
         float minExtent, maxExtent;
@@ -153,7 +165,9 @@ public class LaserGenerator : MonoBehaviour
                 Laser newLaser = Instantiate<Laser>(LaserPrefab);
                 newLaser.transform.parent = this.transform;
 
-                newLaser.SetLaser(start, end);
+                newLaser.SetEndpoints(start, end);
+                newLaser.SetColour(first, second);
+                lasers.Add(newLaser);
 
                 // Update values
                 // TODO: Randomize this
@@ -169,15 +183,50 @@ public class LaserGenerator : MonoBehaviour
 
     public void RemoveLasers()
     {
-        var children = new List<GameObject>();
-        foreach (Transform child in transform) children.Add(child.gameObject);
-        foreach (var child in children) DestroyImmediate(child);
+        foreach (Laser l in lasers) DestroyImmediate(l.gameObject);
+        lasers.Clear();
         CrowdManager.Instance.CrowdCreated = false;
+    }
+
+    /// <summary>
+    /// Currently we don't allow generation of more than one alignment at a time
+    /// Make sure only one is active at a time
+    /// </summary>
+    public void CheckAlignments()
+    {
+        // Prefer in x, y, z order
+        if(AlignX)
+        {
+            AlignY = false;
+            AlignZ = false;
+        }
+        else if(AlignY)
+        {
+            AlignZ = false;
+        }
+    }
+
+    public void OscillateLasers()
+    {
+        // Generate one oscillation
+        
+
+        Vector3 lowBase = lasers[0].StartBase;
+        foreach (Laser l in lasers)
+        {
+            float startoffset = (l.StartBase - lowBase).magnitude;
+
+            OscillationData start = OscillationData.MakeYLine(yMag, 1f, invert: false, offset: startoffset);
+            OscillationData end = OscillationData.MakeYLine(yMag, 1f, invert: true, offset: startoffset);
+            //OscillationData start = OscillationData.MakeYZCircle(yMag, zMag, 1.5f, invert: false, offset: startoffset);
+            //OscillationData end = OscillationData.MakeYZCircle(yMag, zMag, 1.5f, invert: true, offset: startoffset);
+            l.SetOscillation(start, end);
+        }
     }
 
     void OnDrawGizmos()
     {
         Gizmos.color = gizmoColour;
-        Gizmos.DrawCube(transform.position, new Vector3(HalfSizeX * 2, HalfSizeY * 2, HalfSizeZ * 2));
+        Gizmos.DrawWireCube(transform.position, new Vector3(HalfSizeX * 2, HalfSizeY * 2, HalfSizeZ * 2));
     }
 }
