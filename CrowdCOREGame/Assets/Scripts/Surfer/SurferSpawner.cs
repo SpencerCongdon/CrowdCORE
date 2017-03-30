@@ -31,7 +31,7 @@ public class SurferSpawner : Singleton<SurferSpawner>
             SurferPlayer player = PlayerManager.Instance.Players[i];
 
             // TODO: Spawn AI Players
-            HumanSurfer surfer = surferPrefab.GetComponent<HumanSurfer>();
+            HumanSurfer surfer = surferPrefab.GetComponentInChildren<HumanSurfer>();
             surfer.SetPlayer(player);
 
             // TODO: I feel like player lights should be tracking each player themselves - write new code for these
