@@ -1,6 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A class to organize a group of lasers with similar properties.
+/// </summary>
+/// <remarks>
+/// The purpose of this class is to provide a method by which the <see cref="LaserController"/>
+/// can controll sets of lasers within the scene.
+/// </remarks>
 public class LaserGroup : MonoBehaviour
 {
     static Color gizmoColour = new Color(0.0f, 0.9f, 0.2f, 0.4f);
@@ -216,8 +223,8 @@ public class LaserGroup : MonoBehaviour
         {
             float startoffset = (l.StartBase - lowBase).magnitude;
 
-            OscillationData start = OscillationData.MakeYLine(yMag, 1f, invert: false, offset: startoffset);
-            OscillationData end = OscillationData.MakeYLine(yMag, 1f, invert: true, offset: startoffset);
+            ILaserMovement start = null; //PointOscillation.MakeYLine(yMag, 1f, invert: false, offset: startoffset);
+            ILaserMovement end = AngleOscillation.MakeZArc(100f, speed:0.2f, offset:startoffset);//PointOscillation.MakeYLine(yMag, 1f, invert: true, offset: startoffset);
             //OscillationData start = OscillationData.MakeYZCircle(yMag, zMag, 1.5f, invert: false, offset: startoffset);
             //OscillationData end = OscillationData.MakeYZCircle(yMag, zMag, 1.5f, invert: true, offset: startoffset);
             l.SetOscillation(start, end);

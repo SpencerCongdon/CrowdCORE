@@ -21,8 +21,8 @@ public class Laser : MonoBehaviour
     private LineRenderer line;
 
     // Base line dimensions
-    private Vector3 startBase;
-    private Vector3 endBase;
+    protected Vector3 startBase; // When "pointing" the laser at something, this is the origin
+    protected Vector3 endBase;
 
     // Flickering
     [SerializeField]
@@ -43,8 +43,8 @@ public class Laser : MonoBehaviour
     // Ocillation
     [SerializeField]
     private bool isOscillating = false;
-    private OscillationData startOscillation;
-    private OscillationData endOscillation;
+    private ILaserMovement startOscillation;
+    private ILaserMovement endOscillation;
 
     // Colour
     private Color startColour = Color.white;
@@ -53,8 +53,8 @@ public class Laser : MonoBehaviour
     private Color colour0 = Color.white;
     private Color colour1 = Color.white;
 
-    public Vector3 StartBase { get { return startBase; } }
-    public Vector3 EndBase { get { return endBase; } }
+    public virtual Vector3 StartBase { get { return startBase; } }
+    public virtual Vector3 EndBase { get { return endBase; } }
 
     // Use this for initialization
     void Start()
@@ -102,12 +102,12 @@ public class Laser : MonoBehaviour
 
         if(startOscillation != null)
         {
-            line.SetPosition(0, startOscillation.CalculatePos(startBase, theTime));
+            line.SetPosition(0, startOscillation.CalculatePosition(startBase, endBase, theTime));
         }
 
         if (endOscillation != null)
         {
-            line.SetPosition(1, endOscillation.CalculatePos(endBase, theTime));
+            line.SetPosition(1, endOscillation.CalculatePosition(endBase, startBase, theTime));
         }
     }
 
@@ -125,7 +125,7 @@ public class Laser : MonoBehaviour
         line.SetPosition(1, endBase);
     }
 
-    public void SetOscillation(OscillationData start, OscillationData end)
+    public void SetOscillation(ILaserMovement start, ILaserMovement end)
     {
         startOscillation = start;
         endOscillation = end;

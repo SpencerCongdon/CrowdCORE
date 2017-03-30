@@ -1,35 +1,56 @@
 ﻿
+using System;
 using UnityEngine;
 
-public class OscillationData
+/// <summary>
+/// Allows for the oscillation of a point in three dimensions.
+/// </summary>
+public class PointOscillation : ILaserMovement
 {
     private Vector3 _amplitudes = Vector3.zero;
     private Vector3 _speeds = Vector3.one;
+
+    // Desinates whether we use a sine or cosine for osciallation
     private bool _xSine = true;
     private bool _ySine = false;
     private bool _zSine = false;
+
+    // Controls which "direction" we are oscillating
     private bool _xInvert = false;
     private bool _yInvert = false;
     private bool _zInvert = false;
+
+    // An offset in a group of lasers
     private float _offset = 0f;
 
-    public OscillationData()
+    public PointOscillation()
     {
 
     }
 
-    public OscillationData(Vector3 mag, float speed = 1)
+    /// <summary>
+    /// Simple oscillation in three dimentions at a uniform speed.
+    /// </summary>
+    /// <param name="amplitudes"></param>
+    /// <param name="speed"></param>
+    public PointOscillation(Vector3 amplitudes, float speed = 1)
     {
-        _amplitudes = mag;
+        _amplitudes = amplitudes;
     }
 
-    public OscillationData(Vector3 newMagnitues, Vector3 newSpeeds, bool newXSine, bool newYSine, bool newZSine)
+    public PointOscillation(Vector3 newMagnitues, Vector3 newSpeeds, bool newXSine, bool newYSine, bool newZSine)
     {
         _amplitudes = newMagnitues;
         _speeds = newSpeeds;
         _xSine = newXSine;
         _ySine = newYSine;
         _zSine = newZSine;
+    }
+
+    public Vector3 CalculatePosition(Vector3 pointBase, Vector3 otherBase, float time)
+    {
+        // We don't use the other point for point oscillations
+        return CalculatePos(pointBase, time);
     }
 
     public Vector3 CalculatePos(Vector3 origin,  float time)
@@ -53,9 +74,10 @@ public class OscillationData
         return new Vector3(x, y, z);
     }
 
-    public static OscillationData MakeXLine(float xMag, float speed = 1, bool invert = false, float offset = 0f)
+    #region Static Oscillation Contructors
+    public static PointOscillation MakeXLine(float xMag, float speed = 1, bool invert = false, float offset = 0f)
     {
-        OscillationData newData = new OscillationData();
+        PointOscillation newData = new PointOscillation();
 
         newData._amplitudes = new Vector3(xMag, 0, 0);
         newData._xSine = true;
@@ -66,9 +88,9 @@ public class OscillationData
         return newData;
     }
 
-    public static OscillationData MakeYLine(float yMag, float speed = 1, bool invert = false, float offset = 0f)
+    public static PointOscillation MakeYLine(float yMag, float speed = 1, bool invert = false, float offset = 0f)
     {
-        OscillationData newData = new OscillationData();
+        PointOscillation newData = new PointOscillation();
 
         newData._amplitudes = new Vector3(0, yMag, 0);
         newData._ySine = true;
@@ -79,9 +101,9 @@ public class OscillationData
         return newData;
     }
 
-    public static OscillationData MakeZLine(float zMag, float speed = 1, bool invert = false, float offset = 0f)
+    public static PointOscillation MakeZLine(float zMag, float speed = 1, bool invert = false, float offset = 0f)
     {
-        OscillationData newData = new OscillationData();
+        PointOscillation newData = new PointOscillation();
 
         newData._amplitudes = new Vector3(0, 0, zMag);
         newData._zSine = true;
@@ -92,9 +114,9 @@ public class OscillationData
         return newData;
     }
 
-    public static OscillationData MakeXYCircle(float xMag, float yMag, float speed = 1, bool invert = false, float offset = 0f)
+    public static PointOscillation MakeXYCircle(float xMag, float yMag, float speed = 1, bool invert = false, float offset = 0f)
     {
-        OscillationData newData = new OscillationData();
+        PointOscillation newData = new PointOscillation();
 
         newData._amplitudes = new Vector3(xMag, yMag, 0);
         newData._xSine = true;
@@ -110,9 +132,9 @@ public class OscillationData
         return newData;
     }
 
-    public static OscillationData MakeYZCircle(float yMag, float zMag, float speed = 1, bool invert = false, float offset = 0f)
+    public static PointOscillation MakeYZCircle(float yMag, float zMag, float speed = 1, bool invert = false, float offset = 0f)
     {
-        OscillationData newData = new OscillationData();
+        PointOscillation newData = new PointOscillation();
 
         newData._amplitudes = new Vector3(0, yMag, zMag);
         newData._ySine = true;
@@ -129,9 +151,9 @@ public class OscillationData
         return newData;
     }
 
-    public static OscillationData MakeXZCircle(float xMag, float zMag, float speed = 1, bool invert = false, float offset = 0f)
+    public static PointOscillation MakeXZCircle(float xMag, float zMag, float speed = 1, bool invert = false, float offset = 0f)
     {
-        OscillationData newData = new OscillationData();
+        PointOscillation newData = new PointOscillation();
 
         newData._amplitudes = new Vector3(xMag, 0, zMag);
         newData._xSine = true;
@@ -146,4 +168,5 @@ public class OscillationData
 
         return newData;
     }
+    #endregion // Static Oscillation Contructors
 }
