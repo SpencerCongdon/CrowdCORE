@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// A class for tracking base information about the surfer character
 /// </summary>
-[RequireComponent(typeof(SurferControl))]
 public class Surfer : MonoBehaviour {
 
     public enum SurferState
@@ -15,60 +13,55 @@ public class Surfer : MonoBehaviour {
     }
 
     [SerializeField]
+    protected SurferState currentState = SurferState.ALIVE;
+    [SerializeField]
     private SurferControl control;
     [SerializeField]
-    private SurferState currentState = SurferState.ALIVE;
-    [SerializeField]
-    private PlayerLight playerLight;
+    private SurferLight playerLight;
 
     [SerializeField]
-    [Tooltip("DEBUG: If false, this will auto assign a player id to the surfer")]
-    private bool requirePlayer = true;
-
-    private SurferPlayer player;
+    public List<Material> playerShirtMaterials;
+    [SerializeField]
+    public List<SkinnedMeshRenderer> playerShirt;
 
     public SurferState CurrentState { get { return currentState; } set { currentState = value; } }
-    public PlayerLight CurrentLight { get { return playerLight; } set { playerLight = value; } }
-    public Transform MainBody { get { return control.MainBody; } }
+    public SurferLight CurrentLight { get { return playerLight; } set { playerLight = value; } }
 
     [SerializeField]
-    private Collider mainCollider;
+    protected int surferId = -1;
+    public int SurferId { get { return surferId; } }
 
-    private int playerId = -1;
-    public int SurferId { get { return playerId; } }
+    [SerializeField] protected bool canDie = true;
 
     // Use this for initialization
-    void Start () {
-
-        if(requirePlayer)
+    void Start ()
+    {
+        for (int i = 0; i < playerShirt.Count; i++)
         {
-            Debug.Assert(player != null, "Please make sure that the surfer is associated with a SurferPlayer");
-
-            // If we start with a player, make sure to perform the set.
-            // Generally a prefab of the surfer should not automatically include a player
-            if (player != null) SetPlayer(player);
-        }
-        else
-        {
-            // Try anyway
-            if (player != null)
+            if (i != 0)
             {
-                SetPlayer(player);
+                Material[] currentMats = playerShirt[i].materials;
+                currentMats[1] = playerShirtMaterials[0];
+                playerShirt[i].materials = currentMats;
             }
-            else if(Rewired.ReInput.isReady && Rewired.ReInput.players.playerCount > 0)
+            else
             {
-                // Just take a stab at it
-                SetPlayer(new SurferPlayer(0));
+                playerShirt[i].material = playerShirtMaterials[0];
             }
         }
-
-
     }
 
-    
+    void OnCollisionEnter(Collision c)
+    {
+        if (c.gameObject.tag == "DeadZone")
+        {
+            OnHitDeadZone();
+        }
+    }
+
     public void OnHitDeadZone()
     {
-        if (currentState != Surfer.SurferState.DEAD)
+        if (canDie &&  currentState != Surfer.SurferState.DEAD)
         {
             control.enabled = false;
             currentState = Surfer.SurferState.DEAD;
@@ -89,16 +82,4 @@ public class Surfer : MonoBehaviour {
     void Update () {
 
 	}
-
-    
-
-    public void SetPlayer(SurferPlayer p)
-    {
-        if (player == null)
-        {
-            player = p;
-            playerId = player.PlayerID;
-            control.SetPlayerInput(playerId);
-        }
-    }
 }

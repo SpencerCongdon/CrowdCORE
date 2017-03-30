@@ -1,35 +1,43 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LimbAttack : MonoBehaviour
 {
-    [SerializeField] SurferPlayer playerStats;
+    [SerializeField]
+    Surfer surfer;
     public float power;
     public float minLimbVelocity;
+
+    private Rigidbody body;
+
+    void Start()
+    {
+        body = GetComponent<Rigidbody>();
+        Debug.Assert(body != null, "Limb attack is on an object without a rigidbody");
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
         string tag = collision.transform.tag;
-        if (collision.transform.CompareTag("handsChecker"))
+        if (collision.transform.CompareTag("Player"))
         {
-            Transform parent = collision.transform.parent;
+            Surfer otherSurfer = collision.gameObject.GetComponent<Surfer>();
 
-            while(parent.parent != null)
+            if(otherSurfer != null)
             {
-                parent = parent.parent;
+                GameLog.LogFormat("Player {0} just hit Player {1}", GameLog.Category.Surfer, surfer.SurferId, otherSurfer.SurferId);
+
+                if (body.velocity.magnitude > minLimbVelocity && surfer.SurferId != otherSurfer.SurferId)
+                {
+                    Vector3 direction = transform.position - collision.transform.position;
+                    direction.y = -direction.y;
+                    collision.rigidbody.AddForce(direction.normalized * power, ForceMode.Impulse);
+                }
             }
-
-            // TODO: We need to make sure we are hitting a player before we do this
-            SurferPlayer otherPlayerStats = parent.GetComponent<SurferPlayer>();
-            Rigidbody currentBody = GetComponent<Rigidbody>();
-
-            if(currentBody.velocity.magnitude > minLimbVelocity && otherPlayerStats != null && playerStats.PlayerID != otherPlayerStats.PlayerID)
+            else
             {
-                Vector3 direction = transform.position - collision.transform.position;
-                direction.y = -direction.y;
-                collision.rigidbody.AddForce(direction.normalized * power, ForceMode.Impulse);
+                GameLog.LogError("Hit player doesn't have a Surfer component " + collision.gameObject.name, GameLog.Category.Surfer);
             }
+            
         }
     }
 }

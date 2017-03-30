@@ -182,18 +182,18 @@ namespace CrowdCORE
         {
             // TODO: Fix this when we have more final animations
             return "Switch";
-            string param = "";
-            switch (state)
-            {
-                case UIBackgroundState.None:
-                    param = "";
-                    break;
-                default:
-                    Debug.AssertFormat(true, "{0} : The state {1} is not a valid state for an animation transition.", UIManager.Identifier, state.ToString());
-                    break;
-            }
-
-            return param;
+            //string param = "";
+            //switch (state)
+            //{
+            //    case UIBackgroundState.None:
+            //        param = "";
+            //        break;
+            //    default:
+            //        Debug.AssertFormat(true, "{0} : The state {1} is not a valid state for an animation transition.", UIManager.Identifier, state.ToString());
+            //        break;
+            //}
+            //
+            //return param;
         }
 
         /// <summary>
