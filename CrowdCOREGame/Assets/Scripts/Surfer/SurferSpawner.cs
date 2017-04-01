@@ -5,8 +5,8 @@ using UnityEngine;
 public class SurferSpawner : Singleton<SurferSpawner>
 {
     [SerializeField] Transform[] spawnPositions;
-    [SerializeField] PlayerLight[] playerLights;
-    public PlayerLight[] PlayerLights { get { return playerLights; } }
+    [SerializeField] SurferLight[] playerLights;
+    public SurferLight[] PlayerLights { get { return playerLights; } }
 
     private List<GameObject> spawnedSurfers;
     public List<GameObject> SpawnedPlayers { get { return spawnedSurfers; } }
@@ -29,11 +29,13 @@ public class SurferSpawner : Singleton<SurferSpawner>
         {
             GameObject surferPrefab = GameObject.Instantiate(playerPrefab, spawnPositions[i].position, playerPrefab.transform.rotation);
             SurferPlayer player = PlayerManager.Instance.Players[i];
-            Surfer surfer = surferPrefab.GetComponent<Surfer>();
+
+            // TODO: Spawn AI Players
+            HumanSurfer surfer = surferPrefab.GetComponentInChildren<HumanSurfer>();
             surfer.SetPlayer(player);
 
             // TODO: I feel like player lights should be tracking each player themselves - write new code for these
-            PlayerLight pLight = playerLights[i];
+            SurferLight pLight = playerLights[i];
             pLight.GetComponent<Light>().color = GameManager.Instance.PlayerColors[i];
             pLight.enabled = true;
             pLight.GetComponent<Light>().enabled = true;

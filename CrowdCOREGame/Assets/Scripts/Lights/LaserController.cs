@@ -22,7 +22,7 @@ public class LaserController : MonoBehaviour
         // This allows us to simply add groups to the scene while testing.
         // Final versions of a scene should make sure that all groups are specifically added to the controller,
         // as they will not be automatically added in a standalone build
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("LaserGroup");
+        GameObject[] objects = GameObject.FindGameObjectsWithTag(Tag.LASER_GROUP);
         foreach(GameObject g in objects)
         {
             LaserGroup group = g.GetComponent<LaserGroup>();
